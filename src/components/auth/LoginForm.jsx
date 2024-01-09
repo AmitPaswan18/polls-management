@@ -2,14 +2,14 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
+
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { instance } from "../../utils/axiosInstace";
 import { signinSuccess, signinFail } from "../../redux/Slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -113,9 +113,7 @@ export default function LoginForm() {
             </Button>
             <Grid container justifyContent="center">
               <Grid item>
-                <Link href="/signup" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
+                <Link to="/signup">{"Don't have an account? Sign Up"}</Link>
               </Grid>
             </Grid>
           </Box>

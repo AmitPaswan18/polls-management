@@ -2,7 +2,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
+// import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockIcon from "@mui/icons-material/Lock";
@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signupSuccess, signupFail } from "../../redux/Slices/authSlice";
 import { Navigate } from "react-router-dom";
 import { instance } from "../../utils/axiosInstace";
+import { Link } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -141,9 +142,7 @@ export default function Registrationform() {
             </Button>
             <Grid container justifyContent="center">
               <Grid item>
-                <Link href="/" variant="body2">
-                  Already have an account? Sign in
-                </Link>
+                <Link to="/">Already have an account? Sign in</Link>
               </Grid>
             </Grid>
           </Box>
