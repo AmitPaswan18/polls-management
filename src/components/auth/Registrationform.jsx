@@ -12,9 +12,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { signupSuccess, signupFail } from "../../redux/Slices/authSlice";
-import { Navigate } from "react-router-dom";
+
 import { instance } from "../../utils/axiosInstace";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -45,6 +45,7 @@ export default function Registrationform() {
   ];
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   console.log(isAuthenticated);
 
@@ -66,14 +67,14 @@ export default function Registrationform() {
       dispatch(signupSuccess(response.data));
       console.log(response);
     } catch (error) {
-      console.error("Error signing up:", error);
+      console.error("Error signing up:", error.message);
       dispatch(signupFail(error.message));
     }
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      {isAuthenticated && <Navigate to="/" replace={true} />}
+      {isAuthenticated && navigate("/")}
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
