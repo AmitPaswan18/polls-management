@@ -1,7 +1,7 @@
 import AdminPollList from "../components/admin/AdminPollList";
 const Dashboard = () => {
   return (
-    <div className="bg-slate-500 h-[100vh] font-semibold text-lg ">
+    <div className="bg-[#F6F6F6] h-fit font-semibold text-lg ">
       <AdminPollList />
     </div>
   );
