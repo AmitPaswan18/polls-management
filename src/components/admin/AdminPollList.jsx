@@ -40,6 +40,7 @@ export default function AdminPollList() {
     instance
       .get(`/delete_poll_option?id=${deletePollId}&option_text=${optionText}`)
       .then((response) => {
+        console.log(response);
         if (response.status === 200) {
           fetchlatestPoll();
         }
@@ -77,26 +78,24 @@ export default function AdminPollList() {
           Admin Poll DashBoard
         </div>
         <div className="flex text-center w-[50%] pl-[10%] pb-4 gap-4 bg-white ">
-          <ThemeProvider theme={theme}>
-            <button
-              className="bg-blue-500 rounded-md text-sm  font-thin px-6 py-2 text-white"
-              onClick={handleAddNewPoll}>
-              New Poll
-            </button>
-            <button className="bg-red-500 rounded-md text-sm font-thin px-6 py-2 text-white">
-              SignOut
-            </button>
-          </ThemeProvider>
+          <button
+            className="bg-blue-500 rounded-md md:text-sm text-xs md:font-normal font-normal md:px-6 md:py-2 py-1 px-4 text-white"
+            onClick={handleAddNewPoll}>
+            New Poll
+          </button>
+          <button className="bg-red-500 rounded-md text-sm font-normal px-6 py-2 text-white">
+            SignOut
+          </button>
         </div>
       </div>
 
       <div className="h-fit mt-10 pb-10 flex flex-col w-full">
         {allListedPolls.map((element, index) => (
           <div className="flex justify-center w-full mt-1 " key={index}>
-            <div className="flex w-[80%] border-2 shadow-sm shadow-teal-100 rounded-md flex-col justify-center">
-              <div className=" flex justify-between py-2 w-full bg-white px-6 border-b-stone-500 border ">
+            <div className="flex w-[80%] shadow-sm shadow-teal-100 rounded-md flex-col justify-center">
+              <div className=" flex justify-between py-2 w-full bg-white px-6  ">
                 {" "}
-                <div className="text-lg">{element.title}</div>
+                <div className="text-lg font-medium">{element.title}</div>
                 <div className="flex gap-4">
                   <div>
                     <button onClick={() => handleEditTitleOpen(element._id)}>
@@ -114,13 +113,13 @@ export default function AdminPollList() {
                 {element.options.map((option, index) => (
                   <div className="flex justify-between" key={index}>
                     <div
-                      className=" w-full text-sm font-semibold  py-2 px-6 "
+                      className=" w-full font-normal text-base  py-1 px-6 "
                       key={index}>
                       {" "}
                       {option.option}
                     </div>
-                    <div className="pr-2 ">{option.vote}</div>
-                    <span className="pr-6">Votes</span>
+                    <div className="pr-2 font-medium">{option.vote}</div>
+                    <span className="pr-6 font-medium">Votes</span>
                     <div className="pr-6">
                       <button
                         onClick={() =>

@@ -5,7 +5,6 @@ import DashBoard from "./pages/Dashboard.jsx";
 import AdminPollList from "./components/admin/AdminPollList.jsx";
 import EditPollTitle from "./components/admin/EditPollTitle.jsx";
 import AddNewPoll from "./components/admin/AddNewPoll.jsx";
-import "./index.css";
 
 function App() {
   return (

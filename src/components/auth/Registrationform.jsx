@@ -1,19 +1,19 @@
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockIcon from "@mui/icons-material/Lock";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+import bgImage from "../assets/bgImage.webp";
 import { MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   signupSuccess,
   signupFail,
   signout,
+  resetError,
 } from "../../redux/Slices/authSlice";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
@@ -22,6 +22,27 @@ import Stack from "@mui/material/Stack";
 
 import { instance } from "../../utils/axiosInstace";
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
+function MyTextField(props) {
+  const { label, ...otherProps } = props;
+
+  return (
+    <TextField
+      {...otherProps}
+      InputProps={{
+        style: { color: "white" },
+        inputProps: {
+          style: { color: "white" },
+        },
+      }}
+      InputLabelProps={{
+        style: { color: "Black" },
+      }}
+      label={label}
+    />
+  );
+}
 
 function Copyright(props) {
   return (
@@ -36,8 +57,6 @@ function Copyright(props) {
     </Typography>
   );
 }
-
-const defaultTheme = createTheme();
 
 export default function Registrationform() {
   const role = [
@@ -54,8 +73,8 @@ export default function Registrationform() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-  console.log(isAuthenticated);
-  const isError = useSelector((state) => state.auth.error);
+
+  let isError = useSelector((state) => state.auth.error);
 
   const SignupSchema = Yup.object().shape({
     username: Yup.string()
@@ -83,13 +102,10 @@ export default function Registrationform() {
   };
 
   const handleSubmit = async (values, { resetForm }) => {
-    console.log(values);
     try {
       const response = await instance.get("/add_user", { params: values });
       dispatch(signupSuccess(response.data));
-      console.log(response);
       if (response.data.error) {
-        console.log(response.data.message);
         dispatch(signupFail(response.data.message));
       } else {
         dispatch(signupSuccess(response.data));
@@ -99,28 +115,44 @@ export default function Registrationform() {
           navigate("/");
         }, 2000);
         isAuthenticated = false;
+        isError = null;
       }
     } catch (error) {
       console.error("Error signing up:", error.message);
     }
   };
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetError());
+    };
+  }, [dispatch]);
+
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
+    <div>
+      <img className="h-[100vh] w-full" src={bgImage} alt="" />
+      <Container
+        className="border z-10 absolute top-0 md:mt-10 mt-0 right-0 left-0 rounded-md text-black  backdrop-blur-xl shadow-cyan-700 shadow-lg"
+        component="main"
+        maxWidth="xs">
         <CssBaseline />
         <Box
           sx={{
-            marginTop: 8,
+            marginTop: 2,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}>
-          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-            <LockIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign up
+          <Typography
+            sx={{
+              display: "flex",
+              fontFamily: "Poppins",
+              fontSize: "30px",
+              lineHeight: "1",
+            }}
+            component="h1"
+            variant="h6">
+            Sign Up
           </Typography>
           {isAuthenticated && (
             <Stack sx={{ width: "100%" }} spacing={2}>
@@ -134,17 +166,33 @@ export default function Registrationform() {
             initialValues={initialValues}
             validationSchema={SignupSchema}>
             {({ errors, touched }) => (
-              <Form>
-                <Box sx={{ mt: 3 }}>
-                  <Grid container spacing={2}>
+              <Form className="w-full">
+                <Box sx={{ mt: 1 }}>
+                  <Grid
+                    sx={{
+                      display: "flex",
+                      paddingLeft: "60px",
+                      justifyContent: "center",
+                      flexDirection: "column",
+                    }}
+                    container
+                    spacing={2}>
                     <Grid item xs={12}>
                       <Field
-                        as={TextField}
+                        as={MyTextField}
+                        sx={{
+                          color: "white",
+                          width: "80%",
+                          "& input::placeholder": {
+                            color: "white",
+                          },
+                        }}
                         autoComplete="given-name"
                         name="username"
                         required
                         fullWidth
-                        id="username"
+                        id="standard-basic"
+                        variant="standard"
                         label="Username"
                         autoFocus
                       />
@@ -154,13 +202,21 @@ export default function Registrationform() {
                     </Grid>
                     <Grid item xs={12}>
                       <Field
-                        as={TextField}
+                        as={MyTextField}
+                        sx={{
+                          color: "white",
+                          width: "80%",
+                          "& input::placeholder": {
+                            color: "white",
+                          },
+                        }}
                         required
                         fullWidth
                         name="password"
                         label="Password"
                         type="password"
-                        id="password"
+                        id="standard-basic"
+                        variant="standard"
                         autoComplete="new-password"
                       />
                       {errors.password && touched.password ? (
@@ -169,13 +225,21 @@ export default function Registrationform() {
                     </Grid>
                     <Grid item xs={12}>
                       <Field
-                        as={TextField}
+                        as={MyTextField}
+                        sx={{
+                          color: "white",
+                          width: "80%",
+                          "& input::placeholder": {
+                            color: "white",
+                          },
+                        }}
                         required
                         fullWidth
                         name="confirmpassword"
                         label="ConfirmPassword"
                         type="password"
-                        id="confirmpassword"
+                        id="standard-basic"
+                        variant="standard"
                         autoComplete="new-password"
                       />
                       {errors.confirmpassword && touched.confirmpassword ? (
@@ -203,14 +267,22 @@ export default function Registrationform() {
                         <div>{errors.role}</div>
                       ) : null}
                     </Grid>
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      sx={{
+                        color: "white",
+                        mt: 3,
+                        mb: 2,
+                        width: "80%",
+                        "& input::placeholder": {
+                          color: "white",
+                        },
+                      }}>
+                      Sign Up
+                    </Button>
                   </Grid>
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}>
-                    Sign Up
-                  </Button>
                   <Grid container justifyContent="center">
                     <Grid item>
                       <Link to="/">Already have an account? Sign in</Link>
@@ -221,8 +293,8 @@ export default function Registrationform() {
             )}
           </Formik>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
+        <Copyright sx={{ mt: 2, mb: 1 }} />
       </Container>
-    </ThemeProvider>
+    </div>
   );
 }

@@ -6,11 +6,15 @@ import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
+import { ErrorMessage, FieldArray } from "formik";
+import * as Yup from "yup";
 
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { getAllPolls } from "../../redux/Slices/pollSlice";
+import { Formik, Form, Field } from "formik";
 
 const style = {
   position: "absolute",
@@ -25,68 +29,34 @@ const style = {
   p: 4,
 };
 
+const NewPollSchema = Yup.object().shape({
+  title: Yup.string().required("Title is required"),
+  options: Yup.array()
+    .min(2, "Minimum of 2 options required")
+    .max(4, "Maximum of 4 options allowed")
+    .test("unique-options", "Options must be unique", function (options) {
+      const uniqueOptions = new Set(options);
+      return uniqueOptions.size === options.length;
+    }),
+});
+
+const initialValues = {
+  title: "",
+  options: [""],
+};
+
 const AddNewPoll = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(true);
-  const [formData, setFormData] = useState({
-    title: "",
-    options: ["Option 1"],
-  });
-
-  const handleaddpoll = async (event) => {
-    event.preventDefault();
-
-    const formData = new FormData(event.target);
-    const title = formData.get("title");
-    const options = formData.getAll("option");
-
-    instance
-      .get(`/add_poll?title=${title}&options=${options.join("____")}`)
-      .then((response) => {
-        console.log("Successful Response:", response.data);
-        if (response.data.error === 0) {
-          fetchlatestPoll();
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error.message);
-      });
-    setFormData({
-      title: "",
-      options: [],
-    });
-    handleClose();
-  };
 
   const handleClose = () => {
     setOpen(false);
-    setFormData({
-      title: "",
-      options: ["Option 1"],
-    });
     navigate("/dashboard");
   };
 
-  const addOption = () => {
-    if (formData.options.length < 4) {
-      setFormData((prevData) => ({
-        ...prevData,
-        options: [...prevData.options, `Option ${prevData.options.length + 1}`],
-      }));
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
-  const fetchlatestPoll = () => {
+  const fetchLatestPoll = () => {
     instance
       .get("/list_polls")
       .then((response) => dispatch(getAllPolls(response.data.data)));
@@ -99,52 +69,88 @@ const AddNewPoll = () => {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description">
         <Box sx={style}>
-          <form className="font-poppins" onSubmit={handleaddpoll}>
-            <Typography variant="h4">Title:</Typography>
-            <input
-              className="p-1 w-full outline-none hover:border-sky-300 border-2 border-gray-200  rounded-md"
-              type="text"
-              name="title"
-              id="title"
-              value={formData.title}
-              onChange={handleInputChange}
-            />
-            <p className="text-lg">Options:</p>
-            <ul>
-              {formData.options.map((option, index) => (
-                <div className="flex flex-col" key={index}>
-                  {`Opt${index + 1}`}
-                  <input
-                    className="border-2 outline-none  p-1 hover:border-sky-300 border-slate-200 rounded-md m-1"
-                    type="text"
-                    id="option"
-                    name="option"
-                    onChange={(e) => {
-                      const newOptions = [...formData.options];
-                      newOptions[index] = e.target.value;
-                      setFormData((prevDatapoll) => ({
-                        ...prevDatapoll,
-                        options: newOptions,
-                      }));
-                    }}
-                  />
+          <Formik
+            initialValues={initialValues}
+            validationSchema={NewPollSchema}
+            onSubmit={async (values) => {
+              try {
+                const response = await instance.get(
+                  `/add_poll?title=${
+                    values.title
+                  }&options=${values.options.join("____")}`
+                );
+                console.log("Successful Response:", response.data);
+                if (response.data.error === 0) {
+                  fetchLatestPoll();
+                }
+              } catch (error) {
+                console.error("Error:", error.message);
+              }
+
+              handleClose();
+            }}>
+            {(formik) => (
+              <Form className="font-poppins">
+                <p className="text-lg">Title:</p>
+                <Field
+                  className="p-1 w-full outline-none hover:border-sky-300 border-2 border-gray-200  rounded-md"
+                  type="text"
+                  name="title"
+                  id="title"
+                />
+                <ErrorMessage
+                  name="title"
+                  component="div"
+                  className="text-red-400"
+                />
+                <p className="text-lg">Options:</p>
+                <FieldArray
+                  name="options"
+                  render={(arrayHelpers) => (
+                    <ul>
+                      {formik.values.options.map((option, index) => (
+                        <div className="flex flex-col" key={index}>
+                          {`Opt${index + 1}`}
+                          <div>
+                            <Field
+                              className="border-2 outline-none  p-1 hover:border-sky-300 border-slate-200 rounded-md m-1"
+                              type="text"
+                              name={`options.${index}`}
+                            />
+                            <Button
+                              type="button"
+                              onClick={() => arrayHelpers.remove(index)}>
+                              <CloseIcon />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                      {formik.values.options.length < 4 && (
+                        <Button
+                          type="button"
+                          onClick={() => arrayHelpers.push("")}>
+                          <AddCircleOutlineIcon />
+                        </Button>
+                      )}
+                    </ul>
+                  )}
+                />
+                <ErrorMessage
+                  name="options"
+                  component="div"
+                  className="text-red-400"
+                />
+                <div className="py-2 flex flex-col gap-2 w-[90%] pl-[10%]">
+                  <Button type="submit" className="m-2" variant="contained">
+                    Submit
+                  </Button>
+                  <Button onClick={() => handleClose()} variant="contained">
+                    Back to Home
+                  </Button>
                 </div>
-              ))}
-            </ul>
-            {formData.options.length < 4 && (
-              <Button onClick={addOption}>
-                <AddCircleOutlineIcon />
-              </Button>
+              </Form>
             )}
-            <div className="py-2 flex flex-col gap-2 w-[90%] pl-[10%]">
-              <Button type="submit" className="m-2" variant="contained">
-                Submit
-              </Button>
-              <Button onClick={() => handleClose()} variant="contained">
-                Back to Home
-              </Button>
-            </div>
-          </form>
+          </Formik>
         </Box>
       </Modal>
     </div>
