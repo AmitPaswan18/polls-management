@@ -14,8 +14,6 @@ import { signinSuccess, signinFail } from "../../redux/Slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-// import Alert from "@mui/material/Alert";
-// import Stack from "@mui/material/Stack";
 
 function Copyright(props) {
   return (
@@ -44,7 +42,6 @@ export default function LoginForm() {
   const initialValues = {
     username: "",
     password: "",
-    confirmpassword: "",
     role: "user",
   };
 
