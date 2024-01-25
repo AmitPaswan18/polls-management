@@ -44,20 +44,6 @@ function MyTextField(props) {
   );
 }
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}>
-      {"Copyright © "}
-      <Link color="inherit">Poll Management</Link> {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
 export default function Registrationform() {
   const role = [
     {
@@ -130,9 +116,13 @@ export default function Registrationform() {
 
   return (
     <div>
-      <img className="h-[100vh] w-full" src={bgImage} alt="" />
+      <img
+        className="h-[100vh] blur-sm brightness-90  w-full"
+        src={bgImage}
+        alt=""
+      />
       <Container
-        className="border z-10 absolute top-0 md:mt-10 mt-0 right-0 left-0 rounded-md text-black  backdrop-blur-xl shadow-cyan-700 shadow-lg"
+        className="md:border  md:max-h-[90%] h-full border-0 z-10 absolute top-0 md:mt-10 mt-0 right-0 left-0 rounded-md text-black  backdrop-blur-xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
         component="main"
         maxWidth="xs">
         <CssBaseline />
@@ -285,7 +275,9 @@ export default function Registrationform() {
                   </Grid>
                   <Grid container justifyContent="center">
                     <Grid item>
-                      <Link to="/">Already have an account? Sign in</Link>
+                      <Link className="underline" to="/">
+                        Already have an account? Sign in
+                      </Link>
                     </Grid>
                   </Grid>
                 </Box>
@@ -293,7 +285,6 @@ export default function Registrationform() {
             )}
           </Formik>
         </Box>
-        <Copyright sx={{ mt: 2, mb: 1 }} />
       </Container>
     </div>
   );

@@ -1,26 +1,21 @@
-import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
-import Registrationform from "./components/auth/Registrationform.jsx";
-import LoginForm from "./components/auth/LoginForm.jsx";
-import DashBoard from "./pages/Dashboard.jsx";
-import AdminPollList from "./components/admin/AdminPollList.jsx";
-import EditPollTitle from "./components/admin/EditPollTitle.jsx";
-import AddNewPoll from "./components/admin/AddNewPoll.jsx";
-
-function App() {
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LoginForm from "./components/auth/LoginForm";
+import Dashboard from "./pages/Dashboard";
+import Registrationform from "./components/auth/Registrationform";
+import AddNewPoll from "./components/admin/AddNewPoll";
+import EditPollTitle from "./components/admin/EditPollTitle";
+const App = () => {
   return (
-    <div>
-      <Router>
-        <Routes>
-          <Route exact path="/" element={<LoginForm />} />
-          <Route exact path="/signup" element={<Registrationform />} />
-          <Route exact path="/dashboard" element={<DashBoard />} />
-          <Route exact path="/addpoll" element={<AdminPollList />} />
-          <Route exact path="/edittitle/:id" element={<EditPollTitle />} />
-          <Route exact path="/addNewPoll" element={<AddNewPoll />} />
-        </Routes>
-      </Router>
-    </div>
+    <Router>
+      <Routes>
+        <Route exact path="/" element={<LoginForm />} />
+        <Route exact path="/signup" element={<Registrationform />} />
+        <Route exact path="/dashboard" element={<Dashboard />} />
+        <Route exact path="/edittitle/:id" element={<EditPollTitle />} />
+        <Route exact path="/addNewPoll" element={<AddNewPoll />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

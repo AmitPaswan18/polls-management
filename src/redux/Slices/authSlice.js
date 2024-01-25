@@ -6,6 +6,7 @@ export const initialState = {
   isLoginAuthenticated: false,
   loading: true,
   error: null,
+  role: null,
 };
 
 const authSlice = createSlice({
@@ -16,10 +17,12 @@ const authSlice = createSlice({
       state.loading = false;
       state.user = action.payload;
       state.isAuthenticated = true;
+      state.isLoginAuthenticated = false;
       state.error = null;
     },
     signupFail(state, action) {
       state.isAuthenticated = false;
+      state.isLoginAuthenticated = false;
       state.loading = false;
       state.error = action.payload;
     },
@@ -30,14 +33,19 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.isLoginAuthenticated = true;
       state.error = null;
+      state.role = action.payload.role;
     },
     signinFail(state, action) {
       state.loading = false;
       state.error = action.payload;
+      state.isLoginAuthenticated = false;
     },
     signout(state) {
       state.isAuthenticated = false;
+      state.isLoginAuthenticated = false;
       state.user = null;
+      state.loading = false;
+      state.error = null;
     },
     resetError(state) {
       state.error = null;

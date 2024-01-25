@@ -1,14 +1,13 @@
-import { instance } from "../../utils/axiosInstace";
-
-import { Typography } from "@mui/material";
+import { Button } from "@mui/material";
 import ToggleSelectar from "../common/ToggleSelector";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import { instance } from "../../utils/axiosInstace";
 import Box from "@mui/material/Box";
-
-import Modal from "@mui/material/Modal";
+import bgImage from "../assets/bgEditImg.webp";
 
 const style = {
   position: "absolute",
@@ -26,28 +25,20 @@ const style = {
 const EditPollTitle = () => {
   const allListedPolls = useSelector((state) => state.poll.poll);
   const editPollTitleId = useSelector((state) => state.poll.editId);
-
   const navigate = useNavigate();
   const poll = allListedPolls.find(
     (element) => element._id === editPollTitleId
   );
 
-  const [open, setOpen] = useState(true);
   const [editTitle, setEditTitle] = useState(poll.title);
 
   const handleClose = () => {
     navigate("/dashboard");
-    setOpen(false);
   };
 
-  const handleUpdatePollTitle = async (event) => {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    console.log(formData);
-    const title = formData.get("editTitle");
+  const handleUpdatePollTitle = async (values) => {
+    const { editTitle } = values;
 
-    console.log(title);
-    console.log(formData);
     instance
       .get(`/update_poll_title?id=${editPollTitleId}&title=${editTitle}`)
       .then((response) => {
@@ -57,34 +48,42 @@ const EditPollTitle = () => {
       });
   };
 
-  const handleEditTitleChange = (event) => {
-    setEditTitle(event.target.value);
-  };
+  const validationSchema = Yup.object().shape({
+    editTitle: Yup.string()
+      .required("Title is required")
+      .test("notEmpty", "Title must not be empty", (value) => {
+        return value.trim() !== "";
+      }),
+  });
 
   return (
     <div>
-      <div>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description">
-          <Box sx={style}>
-            <form onSubmit={handleUpdatePollTitle}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                Edit Title:
-              </Typography>
-              <ToggleSelectar
-                className={"px-8 py-2 border-2 rounded-md"}
-                value={editTitle}
-                id="editTitle"
-                title="editTitle"
-                onChange={handleEditTitleChange}
-              />
-            </form>
-          </Box>
-        </Modal>
-      </div>
+      <img className="blur-[2px] h-[100vh]  w-full" src={bgImage} alt="" />
+      <Box sx={style}>
+        <Formik
+          initialValues={{ editTitle }}
+          validationSchema={validationSchema}
+          onSubmit={handleUpdatePollTitle}>
+          <Form>
+            <div className="text-2xl">Edit Title:</div>
+            <Field
+              as={ToggleSelectar}
+              className={"px-8 py-2 border-2 mt-4 rounded-md"}
+              name="editTitle"
+              id="editTitle"
+              title="editTitle"
+            />
+            <div className="mt-2 gap-2 flex">
+              <Button type="submit" variant="contained">
+                Save Changes
+              </Button>
+              <Button onClick={() => handleClose()} variant="contained">
+                Back to Home
+              </Button>
+            </div>
+          </Form>
+        </Formik>
+      </Box>
     </div>
   );
 };

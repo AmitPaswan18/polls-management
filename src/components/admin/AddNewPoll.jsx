@@ -1,10 +1,9 @@
-import { useState } from "react";
 import { instance } from "../../utils/axiosInstace";
 
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { Typography } from "@mui/material";
+import bgImage from "../assets/bgEditImg.webp";
 import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
+
 import Box from "@mui/material/Box";
 import { ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
@@ -49,10 +48,7 @@ const AddNewPoll = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [open, setOpen] = useState(true);
-
   const handleClose = () => {
-    setOpen(false);
     navigate("/dashboard");
   };
 
@@ -62,98 +58,93 @@ const AddNewPoll = () => {
       .then((response) => dispatch(getAllPolls(response.data.data)));
   };
   return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description">
-        <Box sx={style}>
-          <Formik
-            initialValues={initialValues}
-            validationSchema={NewPollSchema}
-            onSubmit={async (values) => {
-              try {
-                const response = await instance.get(
-                  `/add_poll?title=${
-                    values.title
-                  }&options=${values.options.join("____")}`
-                );
-                console.log("Successful Response:", response.data);
-                if (response.data.error === 0) {
-                  fetchLatestPoll();
-                }
-              } catch (error) {
-                console.error("Error:", error.message);
+    <>
+      <img className="blur-[2px] h-[100vh]  w-full" src={bgImage} alt="" />
+      <Box sx={style}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={NewPollSchema}
+          onSubmit={async (values) => {
+            try {
+              const response = await instance.get(
+                `/add_poll?title=${values.title}&options=${values.options.join(
+                  "____"
+                )}`
+              );
+              console.log("Successful Response:", response.data);
+              if (response.data.error === 0) {
+                fetchLatestPoll();
               }
+            } catch (error) {
+              console.error("Error:", error.message);
+            }
 
-              handleClose();
-            }}>
-            {(formik) => (
-              <Form className="font-poppins">
-                <p className="text-lg">Title:</p>
-                <Field
-                  className="p-1 w-full outline-none hover:border-sky-300 border-2 border-gray-200  rounded-md"
-                  type="text"
-                  name="title"
-                  id="title"
-                />
-                <ErrorMessage
-                  name="title"
-                  component="div"
-                  className="text-red-400"
-                />
-                <p className="text-lg">Options:</p>
-                <FieldArray
-                  name="options"
-                  render={(arrayHelpers) => (
-                    <ul>
-                      {formik.values.options.map((option, index) => (
-                        <div className="flex flex-col" key={index}>
-                          {`Opt${index + 1}`}
-                          <div>
-                            <Field
-                              className="border-2 outline-none  p-1 hover:border-sky-300 border-slate-200 rounded-md m-1"
-                              type="text"
-                              name={`options.${index}`}
-                            />
-                            <Button
-                              type="button"
-                              onClick={() => arrayHelpers.remove(index)}>
-                              <CloseIcon />
-                            </Button>
-                          </div>
+            handleClose();
+          }}>
+          {(formik) => (
+            <Form className="font-poppins">
+              <p className="text-lg">Title:</p>
+              <Field
+                className="p-1 w-full outline-none hover:border-sky-300 border-2 border-gray-200  rounded-md"
+                type="text"
+                name="title"
+                id="title"
+              />
+              <ErrorMessage
+                name="title"
+                component="div"
+                className="text-red-400"
+              />
+              <p className="text-lg">Options:</p>
+              <FieldArray
+                name="options"
+                render={(arrayHelpers) => (
+                  <ul>
+                    {formik.values.options.map((option, index) => (
+                      <div className="flex flex-col" key={index}>
+                        {`Opt${index + 1}`}
+                        <div>
+                          <Field
+                            className="border-2 outline-none  p-1 hover:border-sky-300 border-slate-200 rounded-md m-1"
+                            type="text"
+                            name={`options.${index}`}
+                          />
+                          <Button
+                            type="button"
+                            onClick={() => arrayHelpers.remove(index)}>
+                            <CloseIcon />
+                          </Button>
                         </div>
-                      ))}
-                      {formik.values.options.length < 4 && (
-                        <Button
-                          type="button"
-                          onClick={() => arrayHelpers.push("")}>
-                          <AddCircleOutlineIcon />
-                        </Button>
-                      )}
-                    </ul>
-                  )}
-                />
-                <ErrorMessage
-                  name="options"
-                  component="div"
-                  className="text-red-400"
-                />
-                <div className="py-2 flex flex-col gap-2 w-[90%] pl-[10%]">
-                  <Button type="submit" className="m-2" variant="contained">
-                    Submit
-                  </Button>
-                  <Button onClick={() => handleClose()} variant="contained">
-                    Back to Home
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </Box>
-      </Modal>
-    </div>
+                      </div>
+                    ))}
+                    {formik.values.options.length < 4 && (
+                      <Button
+                        type="button"
+                        onClick={() => arrayHelpers.push("")}>
+                        <AddCircleOutlineIcon />
+                      </Button>
+                    )}
+                  </ul>
+                )}
+              />
+              <ErrorMessage
+                name="options"
+                component="div"
+                className="text-red-400"
+              />
+              <div className="py-2 flex flex-col gap-2 w-[90%] pl-[10%]">
+                <Button type="submit" className="m-2" variant="contained">
+                  Submit
+                </Button>
+                <Button onClick={() => handleClose()} variant="contained">
+                  Back to Home
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </Box>
+    </>
   );
 };
 
