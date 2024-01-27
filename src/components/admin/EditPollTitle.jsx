@@ -66,7 +66,7 @@ const EditPollTitle = () => {
   });
 
   return (
-    <div className=" bg-[#371953] h-[100vh] w-full">
+    <div className=" bg-[#f8f8f8] h-[100vh] w-full">
       {editLoader ? (
         <Loader loadingtext={"Updating Title..."} />
       ) : (
