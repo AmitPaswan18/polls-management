@@ -117,13 +117,14 @@ export default function Registrationform() {
   return (
     <div>
       <img
-        className="h-[100vh] blur-sm brightness-90  w-full"
+        className="h-[100dvh] blur-sm brightness-90  w-full"
         src={bgImage}
         alt=""
       />
       <Container
-        className="md:border  md:max-h-[90%] h-full border-0 z-10 absolute top-0 md:mt-10 mt-0 right-0 left-0 rounded-md text-black  backdrop-blur-xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
+        className="md:border h-[100dvh] border-0 z-10 absolute top-0 md:max-h-[95%] md:mt-2 mt-0 sm:pt-10 md:pt-0 right-0 left-0 rounded-md text-black  md:backdrop-blur-xl backdrop-blur-2xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
         component="main"
+        sx={{ paddingLeft: "0", paddingRight: "0" }}
         maxWidth="xs">
         <CssBaseline />
         <Box
@@ -275,7 +276,9 @@ export default function Registrationform() {
                   </Grid>
                   <Grid container justifyContent="center">
                     <Grid item>
-                      <Link className="underline" to="/">
+                      <Link
+                        className="underline md:font-normal font-light"
+                        to="/">
                         Already have an account? Sign in
                       </Link>
                     </Grid>

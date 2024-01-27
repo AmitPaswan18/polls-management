@@ -10,6 +10,8 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import Stack from "@mui/material/Stack";
 
+import Pagination from "@mui/material/Pagination";
+
 import { useEffect, useState } from "react";
 
 const theme = createTheme();
@@ -31,18 +33,31 @@ export default function UserPoll() {
   const [isVoted, setVoted] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const allListedPolls = useSelector((state) => state.poll.poll);
-  const totalPage = useSelector((state) => state.poll.page);
+
+  const pollsperpage = 5;
+
+  const [page, setPage] = useState(1);
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
+  const pollsToDisplay = allListedPolls.slice(
+    (page - 1) * pollsperpage,
+    page * pollsperpage
+  );
+
+  const totalPage = Math.ceil(allListedPolls.length / pollsperpage);
+
   const handleLogout = () => {
     localStorage.removeItem("polltoken");
     dispatch(signout());
     navigate("/");
   };
 
-  const handleVotePollOption = (deletePollId, optionText) => {
+  const handleVotePollOption = (votePollId, optionText) => {
     const polltoken = localStorage.getItem("polltoken");
-    console.log(polltoken);
     setVoted(true);
-
     setTimeout(() => {
       if (!isLoading) {
         setVoted(false);
@@ -50,7 +65,7 @@ export default function UserPoll() {
     }, 2000);
 
     instance
-      .get(`/do_vote?id=${deletePollId}&option_text=${optionText}`, {
+      .get(`/do_vote?id=${votePollId}&option_text=${optionText}`, {
         headers: {
           access_token: polltoken,
         },
@@ -104,8 +119,8 @@ export default function UserPoll() {
           </div>
         )}
 
-        <div className="h-fit pt-10 pb-10 flex flex-col bg-[#7D30EF] w-full">
-          {allListedPolls.map((element, index) => (
+        <div className="h-fit pt-10 pb-10 flex flex-col  bg-[#7D30EF] w-full">
+          {pollsToDisplay.map((element, index) => (
             <div className="flex justify-center w-full mt-1 " key={index}>
               <div className="flex md:w-[70%] w-[90%]  shadow-sm border-2 border-white shadow-teal-100 rounded-md flex-col justify-center">
                 <div className=" flex justify-between py-2 w-full bg-white  rounded-sm border-slate-100  px-6  ">
@@ -114,7 +129,9 @@ export default function UserPoll() {
                 <div className="flex w-full bg-white flex-col">
                   {element.options.map((option, index) => (
                     <div
-                      className="flex p-1 mx-2 border-2 border-slate-100 hover:border-purple-500 m-1 rounded-md justify-between"
+                      className={`flex p-1 text-white  mx-2 border-2 border-slate-100 hover:border-purple-500 m-1 rounded-md justify-between ${
+                        option.vote > 0 ? "bg-green-500" : "bg-yellow-500"
+                      }`}
                       key={index}>
                       <div
                         className=" w-full font-normal text-base  py-1 px-6 "
@@ -140,6 +157,16 @@ export default function UserPoll() {
               </div>
             </div>
           ))}
+          <div className=" mt-4 flex justify-center">
+            <div>Page: {page}</div>
+            <div>
+              <Pagination
+                count={totalPage}
+                page={page}
+                onChange={handlePageChange}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </>

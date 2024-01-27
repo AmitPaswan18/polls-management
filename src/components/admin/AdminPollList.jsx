@@ -8,9 +8,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllPolls, editPollTitle } from "../../redux/Slices/pollSlice";
 import { signout } from "../../redux/Slices/authSlice";
 import { useNavigate } from "react-router-dom";
+import AddchartIcon from "@mui/icons-material/Addchart";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+
+import Pagination from "@mui/material/Pagination";
+
+import { useState } from "react";
 
 import { useEffect } from "react";
-
 const theme = createTheme();
 
 theme.typography.h3 = {
@@ -27,7 +33,21 @@ export default function AdminPollList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const allListedPolls = useSelector((state) => state.poll.poll);
-  const totalPage = useSelector((state) => state.poll.page);
+
+  const pollsperpage = 5;
+
+  const [page, setPage] = useState(1);
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
+  const pollsToDisplay = allListedPolls.slice(
+    (page - 1) * pollsperpage,
+    page * pollsperpage
+  );
+
+  const totalPage = Math.ceil(allListedPolls.length / pollsperpage);
 
   const handleDeletePoll = (deleteId) => {
     instance.get(`/delete_poll?id=${deleteId}`).then((response) => {
@@ -52,9 +72,14 @@ export default function AdminPollList() {
     navigate("/addNewPoll");
   };
 
+  const handleAddNewOptions = (id) => {
+    dispatch(editPollTitle(id));
+    navigate(`/addNewOptions/` + id);
+  };
+
   useEffect(() => {
     fetchlatestPoll();
-  }, [totalPage]);
+  }, [page]);
 
   const fetchlatestPoll = () => {
     try {
@@ -99,45 +124,56 @@ export default function AdminPollList() {
       </div>
 
       <div className="h-fit md:pt-10 pt-2 bg-[#7D30EF] pb-10 flex flex-col  w-full">
-        {allListedPolls.map((element, index) => (
+        {pollsToDisplay.map((element, index) => (
           <div className="flex justify-center w-full mt-1 " key={index}>
             <div className="flex md:w-[70%] w-[90%] shadow-sm shadow-teal-100 border-2 border-white rounded-md flex-col justify-center">
               <div className="flex justify-between py-2 w-full bg-white px-6  ">
                 {" "}
-                <div className="text-lg font-medium">{element.title}</div>
-                <div className="flex gap-4 ">
-                  <div>
-                    <button onClick={() => handleEditTitleOpen(element._id)}>
+                <div className="text-xl pt-2 font-bold">{element.title}</div>
+                <div className="flex gap-2 pr-2">
+                  <Tooltip title="Add Options">
+                    <IconButton
+                      onClick={() => handleAddNewOptions(element._id)}>
+                      <AddchartIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Edit Title">
+                    <IconButton
+                      onClick={() => handleEditTitleOpen(element._id)}>
                       <EditIcon />
-                    </button>
-                  </div>
-                  <div>
-                    <button onClick={() => handleDeletePoll(element._id)}>
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete">
+                    <IconButton onClick={() => handleDeletePoll(element._id)}>
                       <DeleteIcon />
-                    </button>
-                  </div>
+                    </IconButton>
+                  </Tooltip>
                 </div>
               </div>
               <div className="flex w-full bg-white flex-col">
                 {element.options.map((option, index) => (
                   <div
-                    className="flex  border-2 border-slate-100 hover:border-purple-500 m-1 rounded-md  justify-between"
+                    className="flex bg-blue-500 hover:bg-blue-600  border-2 border-slate-100 hover:border-blue-300 m-1 rounded-md  justify- between"
                     key={index}>
                     <div
-                      className=" w-full font-normal text-base  py-1 px-6 "
+                      className=" w-full font-normal text-base  text-white py-1 px-6 "
                       key={index}>
                       {" "}
                       {option.option}
                     </div>
-                    <div className="pr-2 font-medium">{option.vote}</div>
-                    <span className="pr-6 font-medium">Votes</span>
+                    <div className={`pr-2 font-medium text-white`}>
+                      {option.vote}
+                    </div>
+                    <span className={`pr-6 text-white font-medium`}>Votes</span>
                     <div className="pr-6">
-                      <button
-                        onClick={() =>
-                          handleDeletePollOption(element._id, option.option)
-                        }>
-                        <DeleteIcon />
-                      </button>
+                      <Tooltip title="Delete Option">
+                        <IconButton
+                          onClick={() =>
+                            handleDeletePollOption(element._id, option.option)
+                          }>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
                     </div>
                   </div>
                 ))}{" "}
@@ -145,6 +181,16 @@ export default function AdminPollList() {
             </div>
           </div>
         ))}
+        <div className=" mt-4 flex justify-center">
+          <div>Page: {page}</div>
+          <div>
+            <Pagination
+              count={totalPage}
+              page={page}
+              onChange={handlePageChange}
+            />
+          </div>
+        </div>
       </div>
     </>
   );

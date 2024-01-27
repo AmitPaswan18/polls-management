@@ -1,7 +1,6 @@
 import { Button } from "@mui/material";
 import ToggleSelectar from "../common/ToggleSelector";
 import { useSelector } from "react-redux";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
@@ -21,25 +20,22 @@ const style = {
   p: 4,
 };
 
-const EditPollTitle = () => {
-  const allListedPolls = useSelector((state) => state.poll.poll);
+const AddNewOptions = () => {
   const editPollTitleId = useSelector((state) => state.poll.editId);
-  const navigate = useNavigate();
-  const poll = allListedPolls.find(
-    (element) => element._id === editPollTitleId
-  );
 
-  const [editTitle, setEditTitle] = useState(poll.title);
+  const navigate = useNavigate();
 
   const handleClose = () => {
     navigate("/dashboard");
   };
 
-  const handleUpdatePollTitle = async (values) => {
-    const { editTitle } = values;
-
+  const handleAddNewOptions = async (values) => {
+    console.log(values);
     instance
-      .get(`/update_poll_title?id=${editPollTitleId}&title=${editTitle}`)
+      .get(
+        `/add_new_option?id=${editPollTitleId}&option_text=${values.addOptions}`
+      )
+
       .then((response) => {
         if (response.status === 200) {
           handleClose();
@@ -48,30 +44,33 @@ const EditPollTitle = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    editTitle: Yup.string()
-      .required("Title is required")
-      .test("notEmpty", "Title must not be empty", (value) => {
+    addOptions: Yup.string()
+      .required("Option is required")
+      .test("notEmpty", "Options must not be empty", (value) => {
         return value.trim() !== "";
       }),
   });
 
+  const initialValues = {
+    addOptions: "",
+  };
+
   return (
-    <div className=" bg-[#371953] h-[100vh] w-full">
+    <div>
+      <div className="bg-[#371953] h-[100vh] w-full"></div>
       <Box sx={style}>
         <Formik
-          initialValues={{ editTitle }}
+          initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={handleUpdatePollTitle}>
+          onSubmit={handleAddNewOptions}>
           <Form>
+            <div className="text-2xl">Add New Option:</div>
             <Field
               as={ToggleSelectar}
-              className={
-                "px-8 py-2 border-2 mt-4 rounded-md placeholder:bg-[#2B1442]"
-              }
-              name="editTitle"
-              placeholder="Edit Title"
-              id="editTitle"
-              title="editTitle"
+              className={"px-8 py-2 border-2 mt-4 rounded-md"}
+              name="addOptions"
+              id="addOptions"
+              title="Add new options"
             />
             <div className="mt-2 gap-2 flex">
               <Button type="submit" variant="contained">
@@ -88,4 +87,4 @@ const EditPollTitle = () => {
   );
 };
 
-export default EditPollTitle;
+export default AddNewOptions;

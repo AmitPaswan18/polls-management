@@ -1,7 +1,6 @@
 import { instance } from "../../utils/axiosInstace";
 
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import bgImage from "../assets/bgEditImg.webp";
 import Button from "@mui/material/Button";
 
 import Box from "@mui/material/Box";
@@ -29,13 +28,20 @@ const style = {
 };
 
 const NewPollSchema = Yup.object().shape({
-  title: Yup.string().required("Title is required"),
+  title: Yup.string()
+    .required("Title is required")
+    .test("noEmpty", "Title must not be empty", (options) => {
+      return options.trim() !== "";
+    }),
   options: Yup.array()
     .min(2, "Minimum of 2 options required")
     .max(4, "Maximum of 4 options allowed")
     .test("unique-options", "Options must be unique", function (options) {
       const uniqueOptions = new Set(options);
       return uniqueOptions.size === options.length;
+    })
+    .test("notEmpty", "Options must not be empty", function (options) {
+      return options.every((option) => option.trim() !== "");
     }),
 });
 
@@ -59,7 +65,7 @@ const AddNewPoll = () => {
   };
   return (
     <>
-      <img className="blur-[2px] h-[100vh]  w-full" src={bgImage} alt="" />
+      <div className=" bg-[#371953] h-[100vh]  w-full"></div>
       <Box sx={style}>
         <Formik
           initialValues={initialValues}
@@ -71,7 +77,6 @@ const AddNewPoll = () => {
                   "____"
                 )}`
               );
-              console.log("Successful Response:", response.data);
               if (response.data.error === 0) {
                 fetchLatestPoll();
               }

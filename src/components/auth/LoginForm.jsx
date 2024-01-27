@@ -27,7 +27,6 @@ function Copyright(props) {
   );
 }
 import { useEffect } from "react";
-import { Height } from "@mui/icons-material";
 
 export default function LoginForm() {
   const isError = useSelector((state) => state.auth.error);
@@ -74,6 +73,7 @@ export default function LoginForm() {
       if (response.data.error === 0) {
         const decoded = jwtDecode(response.data.token);
         dispatch(signinSuccess(decoded));
+        console.log(decoded);
         localStorage.setItem("polltoken", response.data.token);
         resetForm();
       } else {
@@ -101,13 +101,14 @@ export default function LoginForm() {
   return (
     <div>
       <img
-        className="h-[100vh] blur-sm brightness-90 w-full"
+        className="h-[100dvh]  h md:blur-sm blur-0 brightness-90 w-full"
         src={bgImage}
         alt=""
       />
       <Container
-        className=" md:h-[80%] h-full  md:border border-0 z-10 absolute top-0 md:mt-10 mt-0 right-0 left-0 rounded-md text-black  backdrop-blur-xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
+        className="md:h-[80%] h-[100dvh]  md:border border-0 z-10 absolute top-0 md:mt-10 pt-10 md:pt-0 right-0 left-0 rounded-md text-black  md:backdrop-blur-xl backdrop-blur-2xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
         component="main"
+        sx={{ paddingLeft: "0", paddingRight: "0" }}
         maxWidth="xs">
         <Box
           sx={{
@@ -199,7 +200,9 @@ export default function LoginForm() {
                   </div>
                   <Grid container justifyContent="center">
                     <Grid item>
-                      <Link className="underline" to="/signup">
+                      <Link
+                        className="underline md:font-semibold font-light"
+                        to="/signup">
                         {"Don't have an account? Sign Up"}
                       </Link>
                     </Grid>
