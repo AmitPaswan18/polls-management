@@ -47,11 +47,11 @@ function MyTextField(props) {
 export default function Registrationform() {
   const role = [
     {
-      value: "user",
-      label: "User",
+      value: "Guest",
+      label: "Guest",
     },
     {
-      value: "admin",
+      value: "Admin",
       label: "Admin",
     },
   ];
@@ -60,7 +60,7 @@ export default function Registrationform() {
   const navigate = useNavigate();
   let isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  let isError = useSelector((state) => state.auth.error);
+  let signuperror = useSelector((state) => state.auth.signuperror);
 
   const SignupSchema = Yup.object().shape({
     username: Yup.string()
@@ -84,7 +84,7 @@ export default function Registrationform() {
     username: "",
     password: "",
     confirmpassword: "",
-    role: "user",
+    role: "Guest",
   };
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -100,8 +100,6 @@ export default function Registrationform() {
           resetForm();
           navigate("/");
         }, 2000);
-        isAuthenticated = false;
-        isError = null;
       }
     } catch (error) {
       console.error("Error signing up:", error.message);
@@ -151,7 +149,7 @@ export default function Registrationform() {
             </Stack>
           )}
 
-          <div className="text-red-500">{isError}</div>
+          <div className="text-red-500">{signuperror}</div>
           <Formik
             onSubmit={handleSubmit}
             initialValues={initialValues}
@@ -245,9 +243,9 @@ export default function Registrationform() {
                         id="outlined-select-role"
                         select
                         label="Select"
-                        defaultValue="user"
                         name="role"
-                        helperText="Please select your role">
+                        helperText="Please select your role"
+                        defaultValue="Guest">
                         {role.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
                             {option.label}

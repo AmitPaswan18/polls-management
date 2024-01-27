@@ -2,10 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export const initialState = {
   poll: [],
-  loading: true,
+  loading: null,
   error: null,
   editId: null,
   page: 1,
+  voteLoader: null,
+  voteId: null,
 };
 
 const pollSlice = createSlice({
@@ -18,14 +20,38 @@ const pollSlice = createSlice({
     },
     editPollTitle(state, action) {
       state.editId = action.payload;
-      state.loading = false;
+      state.loading = action.payload.loading;
+    },
+    deletePoll(state, action) {
+      state.loading = action.payload.loading;
+    },
+    deletePollOption(state, action) {
+      state.loading = action.payload.loading;
     },
     getPollPage(state, action) {
       state.page = action.payload;
     },
+    getPollVoted(state) {
+      state.voteLoader = false;
+    },
+    votestarted(state, action) {
+      state.voteLoader = true;
+      state.voteId = action.payload;
+    },
+    addNewOption(state, action) {
+      state.loading = action.payload.loading;
+    },
   },
 });
 
-export const { getAllPolls, editPollTitle } = pollSlice.actions;
+export const {
+  getAllPolls,
+  editPollTitle,
+  getPollVoted,
+  votestarted,
+  deletePoll,
+  deletePollOption,
+  addNewOption,
+} = pollSlice.actions;
 
 export default pollSlice.reducer;

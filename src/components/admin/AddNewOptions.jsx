@@ -1,11 +1,13 @@
 import { Button } from "@mui/material";
 import ToggleSelectar from "../common/ToggleSelector";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { instance } from "../../utils/axiosInstace";
 import Box from "@mui/material/Box";
+import { addNewOption } from "../../redux/Slices/pollSlice";
+import Loader from "../common/Loader";
 
 const style = {
   position: "absolute",
@@ -22,6 +24,10 @@ const style = {
 
 const AddNewOptions = () => {
   const editPollTitleId = useSelector((state) => state.poll.editId);
+  const editLoading = useSelector((state) => state.poll.loading);
+  console.log(editLoading);
+
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -30,14 +36,15 @@ const AddNewOptions = () => {
   };
 
   const handleAddNewOptions = async (values) => {
-    console.log(values);
+    dispatch(addNewOption({ loading: true }));
+
     instance
       .get(
         `/add_new_option?id=${editPollTitleId}&option_text=${values.addOptions}`
       )
-
       .then((response) => {
         if (response.status === 200) {
+          dispatch(addNewOption({ loading: false }));
           handleClose();
         }
       });
@@ -56,34 +63,40 @@ const AddNewOptions = () => {
   };
 
   return (
-    <div>
-      <div className="bg-[#371953] h-[100vh] w-full"></div>
-      <Box sx={style}>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleAddNewOptions}>
-          <Form>
-            <div className="text-2xl">Add New Option:</div>
-            <Field
-              as={ToggleSelectar}
-              className={"px-8 py-2 border-2 mt-4 rounded-md"}
-              name="addOptions"
-              id="addOptions"
-              title="Add new options"
-            />
-            <div className="mt-2 gap-2 flex">
-              <Button type="submit" variant="contained">
-                Save Changes
-              </Button>
-              <Button onClick={() => handleClose()} variant="contained">
-                Back to Home
-              </Button>
-            </div>
-          </Form>
-        </Formik>
-      </Box>
-    </div>
+    <>
+      {editLoading ? (
+        <Loader loadingtext={"Adding New Options...."} />
+      ) : (
+        <div>
+          <div className="bg-[#371953] h-[100vh] w-full"></div>
+          <Box sx={style}>
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleAddNewOptions}>
+              <Form>
+                <div className="text-2xl">Add New Option:</div>
+                <Field
+                  as={ToggleSelectar}
+                  className={"px-8 py-2 border-2 mt-4 rounded-md"}
+                  name="addOptions"
+                  id="addOptions"
+                  title="Add new options"
+                />
+                <div className="mt-2 gap-2 flex">
+                  <Button type="submit" variant="contained">
+                    Save Changes
+                  </Button>
+                  <Button onClick={() => handleClose()} variant="contained">
+                    Back to Home
+                  </Button>
+                </div>
+              </Form>
+            </Formik>
+          </Box>
+        </div>
+      )}
+    </>
   );
 };
 

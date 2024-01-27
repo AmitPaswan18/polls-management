@@ -7,12 +7,17 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link } from "react-router-dom";
 import { instance } from "../../utils/axiosInstace";
-import { signinSuccess, signinFail } from "../../redux/Slices/authSlice";
+import {
+  signinSuccess,
+  signinFail,
+  loginLoading,
+} from "../../redux/Slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { jwtDecode } from "jwt-decode";
 import { Navigate } from "react-router-dom/dist";
+import Loader from "../common/Loader";
 function Copyright(props) {
   return (
     <Typography
@@ -29,11 +34,13 @@ function Copyright(props) {
 import { useEffect } from "react";
 
 export default function LoginForm() {
-  const isError = useSelector((state) => state.auth.error);
+  const loginerror = useSelector((state) => state.auth.loginerror);
 
   const isLoginAuthenticated = useSelector(
     (state) => state.auth.isLoginAuthenticated
   );
+
+  const isLoading = useSelector((state) => state.auth.loading);
 
   const dispatch = useDispatch();
 
@@ -68,9 +75,11 @@ export default function LoginForm() {
   });
 
   const handleSubmit = async (values, { resetForm }) => {
+    dispatch(loginLoading(true));
     try {
       const response = await instance.get("/login", { params: values });
       if (response.data.error === 0) {
+        dispatch(loginLoading());
         const decoded = jwtDecode(response.data.token);
         dispatch(signinSuccess(decoded));
         console.log(decoded);
@@ -100,123 +109,147 @@ export default function LoginForm() {
 
   return (
     <div>
-      <img
-        className="h-[100dvh]  h md:blur-sm blur-0 brightness-90 w-full"
-        src={bgImage}
-        alt=""
-      />
-      <Container
-        className="md:h-[80%] h-[100dvh]  md:border border-0 z-10 absolute top-0 md:mt-10 pt-10 md:pt-0 right-0 left-0 rounded-md text-black  md:backdrop-blur-xl backdrop-blur-2xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
-        component="main"
-        sx={{ paddingLeft: "0", paddingRight: "0" }}
-        maxWidth="xs">
-        <Box
-          sx={{
-            paddingTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}>
-          <Typography
-            sx={{
-              display: "flex",
-              fontFamily: "Poppins",
-              fontSize: "30px",
-              lineHeight: "1",
-            }}
-            component="h1"
-            variant="h6">
-            Login
-          </Typography>
+      {isLoading ? (
+        <Loader
+          loadingtext={
+            <Typography
+              sx={{
+                display: "flex",
+                fontFamily: "Poppins",
+                fontSize: "20px",
+                lineHeight: "1",
+                marginTop: "12px",
+                color: "white",
+              }}
+              component="h1"
+              variant="h6">
+              Login Please wait...
+            </Typography>
+          }
+        />
+      ) : (
+        <div>
+          <img
+            className="h-[100dvh]  h md:blur-sm blur-0 brightness-90 w-full"
+            src={bgImage}
+            alt=""
+          />
+          <Container
+            className="md:h-[80%] h-[100dvh]  md:border border-0 z-10 absolute top-0 md:mt-10 pt-10 md:pt-0 right-0 left-0 rounded-md text-black  md:backdrop-blur-xl backdrop-blur-2xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
+            component="main"
+            sx={{ paddingLeft: "0", paddingRight: "0" }}
+            maxWidth="xs">
+            <Box
+              sx={{
+                paddingTop: 8,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}>
+              <Typography
+                sx={{
+                  display: "flex",
+                  fontFamily: "Poppins",
+                  fontSize: "30px",
+                  lineHeight: "1",
+                }}
+                component="h1"
+                variant="h6">
+                Login
+              </Typography>
 
-          <Formik
-            onSubmit={handleSubmit}
-            initialValues={initialValues}
-            validationSchema={SigninSchema}>
-            {({ errors, touched }) => (
-              <Form>
-                <Box sx={{ mt: 1 }}>
-                  <Grid
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                    }}
-                    container
-                    spacing={2}>
-                    <Field
-                      sx={{
-                        width: "70%",
-                        color: "white",
-                        "& input::placeholder": {
-                          color: "white",
-                        },
-                      }}
-                      as={MyTextField}
-                      margin="normal"
-                      required
-                      fullWidth
-                      id="standard-basic"
-                      variant="standard"
-                      label="UserName"
-                      name="username"
-                      autoComplete="UserName"
-                      autoFocus
-                    />
-                    {errors.username && touched.username ? (
-                      <div className="text-red-600 text-start">
-                        {errors.username}
+              <Formik
+                onSubmit={handleSubmit}
+                initialValues={initialValues}
+                validationSchema={SigninSchema}>
+                {({ errors, touched }) => (
+                  <Form>
+                    <Box sx={{ mt: 1 }}>
+                      <Grid
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                        container
+                        spacing={2}>
+                        <Field
+                          sx={{
+                            width: "70%",
+                            color: "white",
+                            "& input::placeholder": {
+                              color: "white",
+                            },
+                          }}
+                          as={MyTextField}
+                          margin="normal"
+                          required
+                          fullWidth
+                          id="standard-basic"
+                          variant="standard"
+                          label="UserName"
+                          name="username"
+                          autoComplete="UserName"
+                          autoFocus
+                        />
+                        {errors.username && touched.username ? (
+                          <div className="text-red-600 text-start">
+                            {errors.username}
+                          </div>
+                        ) : null}
+                        <Field
+                          as={MyTextField}
+                          sx={{ width: "70%" }}
+                          margin="normal"
+                          required
+                          fullWidth
+                          name="password"
+                          label="Password"
+                          type="password"
+                          id="standard-basic"
+                          variant="standard"
+                          autoComplete="current-password"
+                        />
+                        {errors.password && touched.password ? (
+                          <div className="text-red-400">{errors.password}</div>
+                        ) : null}
+                        <Button
+                          type="submit"
+                          fullWidth
+                          variant="contained"
+                          sx={{
+                            width: "70%",
+                            mt: 3,
+                            mb: 2,
+                          }}>
+                          Sign In
+                        </Button>
+                      </Grid>
+                      <div className="text-red-500 text-center text-lg">
+                        {loginerror}
                       </div>
-                    ) : null}
-                    <Field
-                      as={MyTextField}
-                      sx={{ width: "70%" }}
-                      margin="normal"
-                      required
-                      fullWidth
-                      name="password"
-                      label="Password"
-                      type="password"
-                      id="standard-basic"
-                      variant="standard"
-                      autoComplete="current-password"
-                    />
-                    {errors.password && touched.password ? (
-                      <div className="text-red-400">{errors.password}</div>
-                    ) : null}
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      sx={{
-                        width: "70%",
-                        mt: 3,
-                        mb: 2,
-                      }}>
-                      Sign In
-                    </Button>
-                  </Grid>
-                  <div className="text-red-500 text-center text-lg">
-                    {isError}
-                  </div>
-                  <Grid container justifyContent="center">
-                    <Grid item>
-                      <Link
-                        className="underline md:font-semibold font-light"
-                        to="/signup">
-                        {"Don't have an account? Sign Up"}
-                      </Link>
-                    </Grid>
-                  </Grid>
-                </Box>
-              </Form>
+                      <Grid container justifyContent="center">
+                        <Grid item>
+                          <Link
+                            className="underline md:font-semibold font-light"
+                            to="/signup">
+                            {"Don't have an account? Sign Up"}
+                          </Link>
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </Form>
+                )}
+              </Formik>
+            </Box>
+            <Copyright sx={{ mt: 2, mb: 4 }} />
+          </Container>
+          <div>
+            {isLoginAuthenticated && (
+              <Navigate to="/dashboard" replace={true} />
             )}
-          </Formik>
-        </Box>
-        <Copyright sx={{ mt: 2, mb: 4 }} />
-      </Container>
-      <div>
-        {isLoginAuthenticated && <Navigate to="/dashboard" replace={true} />}
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

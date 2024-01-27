@@ -4,8 +4,9 @@ export const initialState = {
   user: null,
   isAuthenticated: false,
   isLoginAuthenticated: false,
-  loading: true,
-  error: null,
+  loading: false,
+  loginerror: null,
+  signuperror: null,
   role: null,
 };
 
@@ -18,13 +19,13 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.isAuthenticated = true;
       state.isLoginAuthenticated = false;
-      state.error = null;
+      state.signuperror = null;
     },
     signupFail(state, action) {
       state.isAuthenticated = false;
       state.isLoginAuthenticated = false;
       state.loading = false;
-      state.error = action.payload;
+      state.signuperror = action.payload;
     },
 
     signinSuccess(state, action) {
@@ -32,12 +33,12 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.user = action.payload;
       state.isLoginAuthenticated = true;
-      state.error = null;
+      state.loginerror = null;
       state.role = action.payload.role;
     },
     signinFail(state, action) {
       state.loading = false;
-      state.error = action.payload;
+      state.loginerror = action.payload;
       state.isLoginAuthenticated = false;
     },
     signout(state) {
@@ -50,6 +51,9 @@ const authSlice = createSlice({
     resetError(state) {
       state.error = null;
     },
+    loginLoading(state, action) {
+      state.loading = action.payload;
+    },
   },
 });
 
@@ -60,6 +64,7 @@ export const {
   signinFail,
   signout,
   resetError,
+  loginLoading,
 } = authSlice.actions;
 
 export default authSlice.reducer;
