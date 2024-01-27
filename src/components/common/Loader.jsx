@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 
 const Loader = ({ loadingtext }) => {
   return (
-    <div className="h-[100vh] w-full flex font-semibold bg-[#371953] border-2 gap-4 text-white justify-center items-center">
+    <div className="h-[100vh] w-full flex font-semibold bg-slate-500 border-2 gap-4 text-white justify-center items-center">
       <div className=" flex gap-2 ">
         <Typography
           sx={{
