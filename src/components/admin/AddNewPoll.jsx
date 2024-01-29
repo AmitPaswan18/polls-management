@@ -72,7 +72,7 @@ const AddNewPoll = () => {
       {voteLoader ? (
         <Loader loadingtext={"Poll adding..."} />
       ) : (
-        <div className="bg-[#2f2f2f2f] h-[100vh]">
+        <div className="bg-[#18181B] h-[100vh]">
           <Box sx={style}>
             <Formik
               initialValues={initialValues}

@@ -68,7 +68,7 @@ const AddNewOptions = () => {
         <Loader loadingtext={"Adding New Options...."} />
       ) : (
         <div>
-          <div className="bg-[#f8f8f8] h-[100dvh] w-full"></div>
+          <div className=" bg-[#18181B] h-[100dvh] w-full"></div>
           <Box sx={style}>
             <Formik
               initialValues={initialValues}
