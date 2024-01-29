@@ -82,7 +82,6 @@ export default function LoginForm() {
         dispatch(loginLoading());
         const decoded = jwtDecode(response.data.token);
         dispatch(signinSuccess(decoded));
-        console.log(decoded);
         localStorage.setItem("polltoken", response.data.token);
         resetForm();
       } else {
@@ -99,6 +98,7 @@ export default function LoginForm() {
     if (token) {
       try {
         const decoded = jwtDecode(token);
+        console.log(decoded);
         dispatch(signinSuccess(decoded));
       } catch (error) {
         console.error("Error decoding token:", error);
@@ -106,6 +106,42 @@ export default function LoginForm() {
       }
     }
   }, [dispatch]);
+
+useEffect(() => {
+  const autoLoginCredentials = localStorage.getItem("autoLoginCredentials");
+  if (autoLoginCredentials) {
+    try {
+      const { username, password } = JSON.parse(autoLoginCredentials);
+      console.log(username, password);
+      dispatch(loginLoading(true));
+      instance
+        .get("/login", {
+          params: {
+            username,
+            password,
+          },
+        })
+        .then((response) => {
+          dispatch(loginLoading(false));
+          if (response.data.error === 0) {
+            const decoded = jwtDecode(response.data.token);
+            dispatch(signinSuccess(decoded));
+            console.log(decoded);
+            localStorage.setItem("polltoken", response.data.token);
+          } else {
+            dispatch(signinFail(response.data.data));
+          }
+        })
+        .catch((error) => {
+          console.log("Error in submit:", error);
+          dispatch(loginLoading(false));
+        });
+      localStorage.removeItem("autoLoginCredentials");
+    } catch (error) {
+      console.log("Error in parsing autoLoginCredentials:", error);
+    }
+  }
+}, [dispatch]);
 
   return (
     <div>

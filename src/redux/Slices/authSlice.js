@@ -54,6 +54,9 @@ const authSlice = createSlice({
     loginLoading(state, action) {
       state.loading = action.payload;
     },
+    signupLoading(state, action) {
+      state.loading = action.payload;
+    },
   },
 });
 
@@ -65,6 +68,7 @@ export const {
   signout,
   resetError,
   loginLoading,
+  signupLoading,
 } = authSlice.actions;
 
 export default authSlice.reducer;
