@@ -38,9 +38,6 @@ const pollSlice = createSlice({
       state.voteLoader = true;
       state.voteId = action.payload;
     },
-    addNewOption(state, action) {
-      state.loading = action.payload.loading;
-    },
   },
 });
 
@@ -51,7 +48,6 @@ export const {
   votestarted,
   deletePoll,
   deletePollOption,
-  addNewOption,
 } = pollSlice.actions;
 
 export default pollSlice.reducer;

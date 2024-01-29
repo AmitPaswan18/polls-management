@@ -5,8 +5,11 @@ import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const showUser = localStorage.getItem("polltoken");
-  const decoded = jwtDecode(showUser);
+
+  const decoded = jwtDecode(JSON.stringify(showUser));
+
   const navigate = useNavigate();
+
   if (!showUser) {
     navigate("/");
   }

@@ -1,5 +1,3 @@
-import { instance } from "../../utils/axiosInstace";
-
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Button from "@mui/material/Button";
 
@@ -12,9 +10,9 @@ import { useNavigate } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
 import Loader from "../common/Loader";
 
-import { editPollTitle, getAllPolls } from "../../redux/Slices/pollSlice";
+import { createNewPoll } from "../../redux/Thunk/createPollThunk";
+
 import { Formik, Form, Field } from "formik";
-import CircularProgress from "@mui/material/CircularProgress";
 
 const style = {
   position: "absolute",
@@ -62,11 +60,6 @@ const AddNewPoll = () => {
     navigate("/dashboard");
   };
 
-  const fetchLatestPoll = () => {
-    instance
-      .get("/list_polls")
-      .then((response) => dispatch(getAllPolls(response.data.data)));
-  };
   return (
     <>
       {voteLoader ? (
@@ -78,21 +71,7 @@ const AddNewPoll = () => {
               initialValues={initialValues}
               validationSchema={NewPollSchema}
               onSubmit={async (values) => {
-                dispatch(editPollTitle({ loading: true }));
-                try {
-                  const response = await instance.get(
-                    `/add_poll?title=${
-                      values.title
-                    }&options=${values.options.join("____")}`
-                  );
-                  if (response.data.error === 0) {
-                    fetchLatestPoll();
-                    dispatch(editPollTitle({ loading: false }));
-                  }
-                } catch (error) {
-                  console.error("Error:", error.message);
-                }
-
+                dispatch(createNewPoll({ values: values }));
                 handleClose();
               }}>
               {(formik) => (

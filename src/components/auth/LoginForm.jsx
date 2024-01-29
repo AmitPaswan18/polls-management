@@ -6,16 +6,17 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { Link } from "react-router-dom";
-import { instance } from "../../utils/axiosInstace";
-import {
-  signinSuccess,
-  signinFail,
-  loginLoading,
-} from "../../redux/Slices/authSlice";
+
+import { resetError } from "../../redux/Slices/authSlice.js";
+
+import { signinAsync } from "../../redux/Thunk/loginThunk.js";
+import { autoLoginAsync } from "../../redux/Thunk/loginThunk.js";
 import { useDispatch, useSelector } from "react-redux";
+
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+
 import { Navigate } from "react-router-dom/dist";
 import Loader from "../common/Loader";
 function Copyright(props) {
@@ -75,73 +76,17 @@ export default function LoginForm() {
   });
 
   const handleSubmit = async (values, { resetForm }) => {
-    dispatch(loginLoading(true));
-    try {
-      const response = await instance.get("/login", { params: values });
-      if (response.data.error === 0) {
-        dispatch(loginLoading());
-        const decoded = jwtDecode(response.data.token);
-        dispatch(signinSuccess(decoded));
-        localStorage.setItem("polltoken", response.data.token);
-        resetForm();
-      } else {
-        dispatch(signinFail(response.data.data));
-      }
-    } catch (error) {
-      console.error("Error signing in:", error);
-      dispatch(signinFail(error.message));
-    }
+    dispatch(signinAsync(values));
+    resetForm();
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("polltoken");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        console.log(decoded);
-        dispatch(signinSuccess(decoded));
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        dispatch(signinFail("Error decoding token"));
-      }
-    }
+    dispatch(autoLoginAsync());
   }, [dispatch]);
 
-useEffect(() => {
-  const autoLoginCredentials = localStorage.getItem("autoLoginCredentials");
-  if (autoLoginCredentials) {
-    try {
-      const { username, password } = JSON.parse(autoLoginCredentials);
-      console.log(username, password);
-      dispatch(loginLoading(true));
-      instance
-        .get("/login", {
-          params: {
-            username,
-            password,
-          },
-        })
-        .then((response) => {
-          dispatch(loginLoading(false));
-          if (response.data.error === 0) {
-            const decoded = jwtDecode(response.data.token);
-            dispatch(signinSuccess(decoded));
-            console.log(decoded);
-            localStorage.setItem("polltoken", response.data.token);
-          } else {
-            dispatch(signinFail(response.data.data));
-          }
-        })
-        .catch((error) => {
-          console.log("Error in submit:", error);
-          dispatch(loginLoading(false));
-        });
-      localStorage.removeItem("autoLoginCredentials");
-    } catch (error) {
-      console.log("Error in parsing autoLoginCredentials:", error);
-    }
-  }
-}, [dispatch]);
+  useEffect(() => {
+    resetError();
+  }, []);
 
   return (
     <div>

@@ -1,10 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import LoginForm from "./components/auth/LoginForm";
 import Dashboard from "./pages/Dashboard";
 import Registrationform from "./components/auth/Registrationform";
 import AddNewPoll from "./components/admin/AddNewPoll";
 import EditPollTitle from "./components/admin/EditPollTitle";
 import AddNewOptions from "./components/admin/AddNewOptions";
+
 const App = () => {
   return (
     <Router>

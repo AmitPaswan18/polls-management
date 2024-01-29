@@ -4,10 +4,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { instance } from "../../utils/axiosInstace";
+
 import Box from "@mui/material/Box";
-import { addNewOption } from "../../redux/Slices/pollSlice";
+
 import Loader from "../common/Loader";
+import { addNewOptionAsync } from "../../redux/Thunk/pollThunk";
+import { useEffect } from "react";
 
 const style = {
   position: "absolute",
@@ -25,7 +27,6 @@ const style = {
 const AddNewOptions = () => {
   const editPollTitleId = useSelector((state) => state.poll.editId);
   const editLoading = useSelector((state) => state.poll.loading);
-  console.log(editLoading);
 
   const dispatch = useDispatch();
 
@@ -36,18 +37,18 @@ const AddNewOptions = () => {
   };
 
   const handleAddNewOptions = async (values) => {
-    dispatch(addNewOption({ loading: true }));
+    try {
+      dispatch(
+        addNewOptionAsync({
+          editPollTitleId,
+          optionText: values.addOptions,
+        })
+      );
 
-    instance
-      .get(
-        `/add_new_option?id=${editPollTitleId}&option_text=${values.addOptions}`
-      )
-      .then((response) => {
-        if (response.status === 200) {
-          dispatch(addNewOption({ loading: false }));
-          handleClose();
-        }
-      });
+      handleClose();
+    } catch (error) {
+      console.error("Error adding new option:", error);
+    }
   };
 
   const validationSchema = Yup.object().shape({
@@ -61,7 +62,7 @@ const AddNewOptions = () => {
   const initialValues = {
     addOptions: "",
   };
-
+  useEffect(() => {}, []);
   return (
     <>
       {editLoading ? (

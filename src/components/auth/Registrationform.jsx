@@ -6,25 +6,20 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Loader from "../common/Loader";
+import { signupAsync } from "../../redux/Thunk/signupThunk.js";
 
 import bgImage from "../assets/bgImage.webp";
 import { MenuItem } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  signupSuccess,
-  signupFail,
-  signout,
-  signupLoading,
-  resetError,
-} from "../../redux/Slices/authSlice";
+
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import Alert from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-
-import { instance } from "../../utils/axiosInstace";
-import { Link, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { resetError } from "../../redux/Slices/authSlice";
+
+import { Link, useNavigate } from "react-router-dom";
 
 function MyTextField(props) {
   const { label, ...otherProps } = props;
@@ -59,10 +54,10 @@ export default function Registrationform() {
   ];
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   let isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   let isLoading = useSelector((state) => state.auth.loading);
-  console.log(isLoading);
+
+  const navigate = useNavigate();
 
   let signuperror = useSelector((state) => state.auth.signuperror);
 
@@ -92,35 +87,8 @@ export default function Registrationform() {
   };
 
   const handleSubmit = async (values, { resetForm }) => {
-    try {
-      dispatch(signupLoading(true));
-      console.log(values);
-
-      localStorage.setItem(
-        "autoLoginCredentials",
-        JSON.stringify({
-          username: values.username,
-          password: values.password,
-          role: values.role,
-        })
-      );
-
-      const response = await instance.get("/add_user", { params: values });
-      dispatch(signupSuccess(response.data));
-      if (response.data.error) {
-        dispatch(signupFail(response.data.message));
-      } else {
-        dispatch(signupSuccess(response.data));
-        dispatch(signupLoading(false ));
-        setTimeout(function () {
-          dispatch(signout());
-          resetForm();
-          navigate("/");
-        }, 1000);
-      }
-    } catch (error) {
-      console.error("Error signing up:", error.message);
-    }
+    dispatch(signupAsync(values));
+    resetForm();
   };
 
   useEffect(() => {
@@ -128,6 +96,12 @@ export default function Registrationform() {
       dispatch(resetError());
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated]);
 
   return (
     <div>
