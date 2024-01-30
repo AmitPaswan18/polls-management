@@ -47,7 +47,7 @@ const NewPollSchema = Yup.object().shape({
 
 const initialValues = {
   title: "",
-  options: [""],
+  options: ["", ""],
 };
 
 const AddNewPoll = () => {

@@ -11,19 +11,17 @@ export const initialState = {
   signuperror: null,
   role: null,
   error: null,
+
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginLoading(state, action) {
-      state.loading = action.payload;
-    },
     signinSuccess(state, action) {
       state.loading = false;
-      state.user = action.payload;
-      state.isAuthenticated = false;
+      state.user = action.payload.user;
+      state.isAuthenticated = true;
       state.isLoginAuthenticated = true;
       state.role = action.payload.role;
       state.error = null;
@@ -53,6 +51,7 @@ const authSlice = createSlice({
       state.loginerror = action.payload;
       state.user = null;
     },
+
     signupLoading(state, action) {
       state.loading = action.payload;
     },
@@ -85,13 +84,13 @@ const authSlice = createSlice({
         state.loading = false;
         state.isAuthenticated = false;
         state.user = action.payload;
-        state.isLoginAuthenticated = true;
+        state.isLoginAuthenticated = action.payload.loginauth;
         state.loginerror = null;
       })
       .addCase(signinAsync.rejected, (state, action) => {
         state.loading = false;
         state.isLoginAuthenticated = false;
-        state.loginerror = action.error.message;
+        state.loginerror = action.payload;
       });
   },
 });
@@ -103,8 +102,6 @@ export const {
   signinFail,
   signout,
   resetError,
-  loginLoading,
-  signupLoading,
 } = authSlice.actions;
 
 export default authSlice.reducer;

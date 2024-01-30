@@ -15,7 +15,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router-dom";
 
 import { Navigate } from "react-router-dom/dist";
 import Loader from "../common/Loader";
@@ -36,14 +35,13 @@ import { useEffect } from "react";
 
 export default function LoginForm() {
   const loginerror = useSelector((state) => state.auth.loginerror);
+  const isLoading = useSelector((state) => state.auth.loading);
+  
+  const dispatch = useDispatch();
 
   const isLoginAuthenticated = useSelector(
     (state) => state.auth.isLoginAuthenticated
   );
-
-  const isLoading = useSelector((state) => state.auth.loading);
-
-  const dispatch = useDispatch();
 
   const initialValues = {
     username: "",
@@ -111,12 +109,12 @@ export default function LoginForm() {
       ) : (
         <div>
           <img
-            className="h-[100dvh]  h md:blur-sm blur-0 brightness-90 w-full"
+            className="h-[100dvh] md:blur-sm blur-0 brightness-90 w-full"
             src={bgImage}
             alt=""
           />
           <Container
-            className="md:h-[80%] h-[100dvh]  md:border border-0 z-10 absolute top-0 md:mt-10 pt-10 md:pt-0 right-0 left-0 rounded-md text-black  md:backdrop-blur-xl backdrop-blur-2xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
+            className="md:h-fit h-[100dvh]  md:border border-0 z-10 absolute top-0 md:mt-10 pt-10 md:pt-0 right-0 left-0 rounded-md text-black  md:backdrop-blur-xl backdrop-blur-2xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
             component="main"
             sx={{ paddingLeft: "0", paddingRight: "0" }}
             maxWidth="xs">
@@ -225,10 +223,10 @@ export default function LoginForm() {
             <Copyright sx={{ mt: 2, mb: 4 }} />
           </Container>
           <div>
-            {isLoginAuthenticated && (
+            {isLoginAuthenticated &&  (
               <Navigate to="/dashboard" replace={true} />
             )}
-          </div>
+          </div>{" "}
         </div>
       )}
     </div>

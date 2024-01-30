@@ -1,21 +1,26 @@
+import { jwtDecode } from "jwt-decode";
 import AdminPollList from "../components/admin/AdminPollList";
 import UserPoll from "../components/users/UserPoll";
-import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const Dashboard = () => {
-  const showUser = localStorage.getItem("polltoken");
-
-  const decoded = jwtDecode(JSON.stringify(showUser));
-
+  const token = localStorage.getItem("polltoken");
+  const decodeToken = jwtDecode(token);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
 
-  if (!showUser) {
-    navigate("/");
-  }
   return (
-    <div className="bg-[#F6F6F6] h-fit font-semibold text-lg ">
-      <div>{decoded.role === "Admin" ? <AdminPollList /> : <UserPoll />}</div>
+    <div className="bg-[#F6F6F6] h-fit font-semibold text-lg">
+      {" "}
+      <div>
+        {decodeToken.role === "Admin" ? <AdminPollList /> : <UserPoll />}
+      </div>
     </div>
   );
 };

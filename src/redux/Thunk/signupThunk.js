@@ -6,11 +6,9 @@ import { signupSuccess, signupFail } from "../Slices/authSlice";
 export const signupAsync = createAsyncThunk(
   "auth/signup",
   async (userData, { dispatch }) => {
-    console.log(userData);
 
     try {
       const response = await instance.get("/add_user", { params: userData });
-      console.log(response);
 
       localStorage.setItem(
         "autoLoginCredentials",

@@ -8,8 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getAllPolls,
   editPollTitle,
-  deletePoll,
-  deletePollOption,
 } from "../../redux/Slices/pollSlice";
 import { signout } from "../../redux/Slices/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +16,8 @@ import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import NoPollData from "./NoPollData";
 import Loader from "../common/Loader";
+import { deletePollOptionAsync } from "../../redux/Thunk/pollOptionThunk";
+import { deletePollAsync } from "../../redux/Thunk/pollOptionThunk";
 
 import Pagination from "@mui/material/Pagination";
 
@@ -59,26 +59,15 @@ export default function AdminPollList() {
   const totalPage = Math.ceil(allListedPolls.length / pollsperpage);
 
   const handleDeletePoll = (deleteId) => {
-    dispatch(deletePoll({ loading: true }));
-    instance.get(`/delete_poll?id=${deleteId}`).then((response) => {
-      if (response.status === 200) {
-        dispatch(deletePoll({ loading: false }));
-        fetchlatestPoll();
-      }
-    });
+    dispatch(deletePollAsync({ deleteId }));
   };
 
-  const handleDeletePollOption = (deletePollId, optionText) => {
-    dispatch(deletePollOption({ loading: true }));
-    instance
-      .get(`/delete_poll_option?id=${deletePollId}&option_text=${optionText}`)
-      .then((response) => {
-        console.log(response);
-        if (response.status === 200) {
-          dispatch(deletePollOption({ loading: false }));
-          fetchlatestPoll();
-        }
-      });
+  const handleDeletePollOption = async (deletePollId, optionText) => {
+    try {
+      await dispatch(deletePollOptionAsync({ deletePollId, optionText }));
+    } catch (error) {
+      console.error("Error in handleDeletePollOption:", error);
+    }
   };
 
   const handleAddNewPoll = () => {
@@ -153,20 +142,22 @@ export default function AdminPollList() {
                         {element.title}
                       </div>
                       <div className="flex md:gap-2 gap-0 md:pr-2">
-                        <Tooltip
-                          title={
-                            element.options.length >= 4
-                              ? "Maximum options reached"
-                              : "Add Options"
-                          }>
-                          <IconButton
-                            onClick={() =>
-                              element.options.length < 4 &&
-                              handleAddNewOptions(element._id)
+                        {element.options.length < 4 ? (
+                          <Tooltip
+                            title={
+                              element.options.length >= 4
+                                ? "Maximum options reached"
+                                : "Add Options"
                             }>
-                            <AddchartIcon />
-                          </IconButton>
-                        </Tooltip>
+                            <IconButton
+                              onClick={() =>
+                                element.options.length < 4 &&
+                                handleAddNewOptions(element._id)
+                              }>
+                              <AddchartIcon />
+                            </IconButton>
+                          </Tooltip>
+                        ) : null}
                         <Tooltip title="Edit Title">
                           <IconButton
                             onClick={() => handleEditTitleOpen(element._id)}>

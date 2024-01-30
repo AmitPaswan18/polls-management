@@ -5,6 +5,8 @@ import {
   createPollStart,
   createPollSuccess,
 } from "../Slices/createPollSlice";
+
+import { fetchLatestPoll } from "../../utils/fetchLatestdata";
 export const createNewPoll = createAsyncThunk(
   "poll/addNewOption",
   async ({ values }, { dispatch }) => {
@@ -17,6 +19,7 @@ export const createNewPoll = createAsyncThunk(
 
       if (response.status === 200) {
         dispatch(createPollSuccess());
+        fetchLatestPoll(dispatch)
         return response.data;
       } else {
         dispatch(createPollFailure());

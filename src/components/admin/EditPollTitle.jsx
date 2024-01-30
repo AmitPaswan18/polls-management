@@ -5,10 +5,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { instance } from "../../utils/axiosInstace";
+
 import Box from "@mui/material/Box";
-import { deletePoll } from "../../redux/Slices/pollSlice";
+
 import Loader from "../common/Loader";
+
+import { updatePollTitleAsync } from "../../redux/Thunk/PollTitleThunk";
 
 const style = {
   position: "absolute",
@@ -28,7 +30,6 @@ const EditPollTitle = () => {
   const editPollTitleId = useSelector((state) => state.poll.editId);
 
   const editLoader = useSelector((state) => state.poll.loading);
-  console.log(editLoader);
 
   const dispatch = useDispatch();
 
@@ -44,17 +45,15 @@ const EditPollTitle = () => {
   };
 
   const handleUpdatePollTitle = async (values) => {
+    
     const { editTitle } = values;
-    dispatch(deletePoll({ loading: true }));
+    const success = await dispatch(
+      updatePollTitleAsync({ editPollTitleId, editTitle })
+    );
 
-    instance
-      .get(`/update_poll_title?id=${editPollTitleId}&title=${editTitle}`)
-      .then((response) => {
-        if (response.status === 200) {
-          dispatch(deletePoll({ loading: false }));
-          handleClose();
-        }
-      });
+    if (success) {
+      handleClose();
+    }
   };
 
   const validationSchema = Yup.object().shape({

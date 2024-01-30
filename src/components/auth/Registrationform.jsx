@@ -131,7 +131,7 @@ export default function Registrationform() {
             alt=""
           />
           <Container
-            className="md:border h-[100dvh] border-0 z-10 absolute top-0 md:max-h-[95%] md:mt-2 mt-0 sm:pt-10 md:pt-0 right-0 left-0 rounded-md text-black  md:backdrop-blur-xl backdrop-blur-2xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
+            className="md:border h-[100dvh] border-0 z-10 absolute top-0 md:h-fit md:mt-2 mt-0 sm:pt-10 md:pt-0 right-0 left-0 rounded-md text-black  md:backdrop-blur-xl backdrop-blur-2xl backdrop-brightness-110 shadow-cyan-700 shadow-lg"
             component="main"
             sx={{ paddingLeft: "0", paddingRight: "0" }}
             maxWidth="xs">
@@ -288,7 +288,7 @@ export default function Registrationform() {
                         </Button>
                       </Grid>
                       <Grid container justifyContent="center">
-                        <Grid item>
+                        <Grid sx={{ mt: 2, mb: 4 }} item>
                           <Link
                             className="underline md:font-normal font-light"
                             to="/">
