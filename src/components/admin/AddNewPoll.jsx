@@ -30,20 +30,32 @@ const style = {
 const NewPollSchema = Yup.object().shape({
   title: Yup.string()
     .required("Title is required")
-    .test("noEmpty", "Title must not be empty", (options) => {
-      return options.trim() !== "";
+    .test("noEmpty", "Title must not be empty", (title) => {
+      return title.trim() !== "";
     }),
   options: Yup.array()
     .min(2, "Minimum of 2 options required")
     .max(4, "Maximum of 4 options allowed")
     .test("unique-options", "Options must be unique", function (options) {
-      const uniqueOptions = new Set(options);
-      return uniqueOptions.size === options.length;
+      const lowercaseOptions = options.map((option) =>
+        option.trim().toLowerCase()
+      );
+      const uniqueOptions = new Set(lowercaseOptions);
+      return uniqueOptions.size === lowercaseOptions.length;
     })
     .test("notEmpty", "Options must not be empty", function (options) {
       return options.every((option) => option.trim() !== "");
-    }),
+    })
+    .test(
+      "notSameAsTitle",
+      "Options must not be the same as the title",
+      function (options, context) {
+        const lowercaseTitle = context.parent.title.trim().toLowerCase();
+        return !options.includes(lowercaseTitle);
+      }
+    ),
 });
+
 
 const initialValues = {
   title: "",
@@ -74,7 +86,7 @@ const AddNewPoll = () => {
                 dispatch(createNewPoll({ values: values }));
                 handleClose();
               }}>
-              {(formik) => (
+              {(formik , dirty) => (
                 <Form className="font-poppins">
                   <p className="text-lg">Title:</p>
                   <Field
@@ -128,7 +140,7 @@ const AddNewPoll = () => {
                     className="text-red-400"
                   />
                   <div className="py-2 flex flex-col gap-2 w-[90%] pl-[10%]">
-                    <Button type="submit" className="m-2" variant="contained">
+                    <Button type="submit" className="m-2" disabled={dirty} variant="contained">
                       Submit
                     </Button>
                     <Button onClick={() => handleClose()} variant="contained">
