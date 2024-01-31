@@ -57,6 +57,8 @@ const authSlice = createSlice({
     },
     resetError(state) {
       state.error = null;
+      state.loginerror = null;
+      state.signuperror = null;  
     },
   },
   extraReducers: (builder) => {

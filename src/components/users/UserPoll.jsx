@@ -1,13 +1,11 @@
-import { instance } from "../../utils/axiosInstace";
+import { fetchLatestPoll } from "../../utils/fetchLatestdata";
 
 import { createTheme } from "@mui/material/styles";
 
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAllPolls,
-  getPollVoted,
-  votestarted,
-} from "../../redux/Slices/pollSlice";
+
+import { getVoteAsync } from "../../redux/Thunk/votePollThunk";
+
 import { useNavigate } from "react-router-dom/dist";
 import { signout } from "../../redux/Slices/authSlice";
 import Alert from "@mui/material/Alert";
@@ -34,11 +32,9 @@ theme.typography.h3 = {
 export default function UserPoll() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [isVoted, setVoted] = useState(false);
-  const [isLoading, setLoading] = useState(false);
+  const loading = useSelector((state) => state.poll.loading);
+  const voted = useSelector((state) => state.poll.Voted);
   const allListedPolls = useSelector((state) => state.poll.poll);
-  const voteLoader = useSelector((state) => state.poll.voteLoader);
 
   const pollsperpage = 5;
 
@@ -62,47 +58,16 @@ export default function UserPoll() {
   };
 
   const handleVotePollOption = (votePollId, optionText) => {
-    dispatch(votestarted({ votePollId: votePollId, optionText: optionText }));
-    const polltoken = localStorage.getItem("polltoken");
-    setTimeout(() => {
-      if (!isLoading) {
-        setVoted(false);
-      }
-    }, 2000);
-
-    instance
-      .get(`/do_vote?id=${votePollId}&option_text=${optionText}`, {
-        headers: {
-          access_token: polltoken,
-        },
-      })
-      .then((response) => {
-        if (response.data.error === 0) {
-          dispatch(getPollVoted());
-          setLoading(false);
-          setVoted(true);
-          fetchlatestPoll();
-        }
-      });
+    dispatch(getVoteAsync({ votePollId: votePollId, optionText: optionText }));
   };
 
   useEffect(() => {
-    fetchlatestPoll();
+    fetchLatestPoll(dispatch);
   }, [totalPage]);
-
-  const fetchlatestPoll = () => {
-    try {
-      instance
-        .get("/list_polls")
-        .then((response) => dispatch(getAllPolls(response.data.data)));
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <>
-      {voteLoader ? (
+      {loading ? (
         <Loader loadingtext={"Vote updating..."} />
       ) : (
         <div className="w-full">
@@ -118,7 +83,7 @@ export default function UserPoll() {
             </button>
           </div>
 
-          {isVoted && (
+          {voted && (
             <div className=" fixed top-1 flex justify-center md:left-[40%] left-6">
               <Stack sx={{ width: "100%" }} spacing={2}>
                 <Alert severity="success">

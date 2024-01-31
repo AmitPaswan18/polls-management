@@ -6,8 +6,8 @@ export const initialState = {
   error: null,
   editId: null,
   page: 1,
-  voteLoader: null,
   voteId: null,
+  Voted : false,
 };
 
 const pollSlice = createSlice({
@@ -17,6 +17,8 @@ const pollSlice = createSlice({
     getAllPolls(state, action) {
       state.loading = false;
       state.poll = action.payload;
+      state.Voted = false
+
     },
     editPollTitle(state, action) {
       state.editId = action.payload;
@@ -31,12 +33,24 @@ const pollSlice = createSlice({
     getPollPage(state, action) {
       state.page = action.payload;
     },
-    getPollVoted(state) {
-      state.voteLoader = false;
+
+    getvotestarted(state) {
+      state.loading = true;
+       state.Voted = false;
     },
-    votestarted(state, action) {
-      state.voteLoader = true;
+    getPollVotedSuccess(state, action) {
+      state.loading = false;
+      state.Voted = true;
       state.voteId = action.payload;
+    },
+    getPollVotedFail(state, action) {
+      state.loading = false;
+      state.Voted = false;
+      state.error = action.payload;
+    },
+
+    fetchSinglePoll(state, action) {
+      state.poll = action.payload;
     },
   },
 });
@@ -44,7 +58,9 @@ const pollSlice = createSlice({
 export const {
   getAllPolls,
   editPollTitle,
-  getPollVoted,
+  getPollVotedSuccess,
+  getPollVotedFail,
+  getvotestarted,
   votestarted,
   deletePoll,
   deletePollOption,

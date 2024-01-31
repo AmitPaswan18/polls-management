@@ -1,12 +1,9 @@
-import { instance } from "../../utils/axiosInstace";
-
 import { createTheme } from "@mui/material/styles";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  getAllPolls,
   editPollTitle,
 } from "../../redux/Slices/pollSlice";
 import { signout } from "../../redux/Slices/authSlice";
@@ -18,6 +15,7 @@ import NoPollData from "./NoPollData";
 import Loader from "../common/Loader";
 import { deletePollOptionAsync } from "../../redux/Thunk/pollOptionThunk";
 import { deletePollAsync } from "../../redux/Thunk/pollOptionThunk";
+import { fetchLatestPoll } from "../../utils/fetchLatestdata";
 
 import Pagination from "@mui/material/Pagination";
 
@@ -80,18 +78,9 @@ export default function AdminPollList() {
   };
 
   useEffect(() => {
-    fetchlatestPoll();
+    fetchLatestPoll(dispatch);
   }, [page]);
 
-  const fetchlatestPoll = () => {
-    try {
-      instance
-        .get("/list_polls")
-        .then((response) => dispatch(getAllPolls(response.data.data)));
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const handleEditTitleOpen = (id) => {
     dispatch(editPollTitle(id));

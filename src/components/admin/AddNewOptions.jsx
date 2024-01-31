@@ -9,7 +9,6 @@ import Box from "@mui/material/Box";
 
 import Loader from "../common/Loader";
 import { addNewOptionAsync } from "../../redux/Thunk/pollThunk";
-import { useEffect } from "react";
 
 const style = {
   position: "absolute",
@@ -25,11 +24,11 @@ const style = {
 };
 
 const AddNewOptions = () => {
+
   const editPollTitleId = useSelector((state) => state.poll.editId);
   const editLoading = useSelector((state) => state.poll.loading);
 
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -62,7 +61,8 @@ const AddNewOptions = () => {
   const initialValues = {
     addOptions: "",
   };
-  useEffect(() => {}, []);
+
+  
   return (
     <>
       {editLoading ? (

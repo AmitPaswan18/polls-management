@@ -83,7 +83,9 @@ export default function LoginForm() {
   }, [dispatch]);
 
   useEffect(() => {
-    resetError();
+     return () => {
+       resetError(); 
+     };
   }, []);
 
   return (

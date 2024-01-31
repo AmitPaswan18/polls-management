@@ -102,11 +102,13 @@ const AddNewPoll = () => {
                                 type="text"
                                 name={`options.${index}`}
                               />
-                              <Button
-                                type="button"
-                                onClick={() => arrayHelpers.remove(index)}>
-                                <CloseIcon />
-                              </Button>
+                              {formik.values.options.length > 2 && (
+                                <Button
+                                  type="button"
+                                  onClick={() => arrayHelpers.remove(index)}>
+                                  <CloseIcon />
+                                </Button>
+                              )}
                             </div>
                           </div>
                         ))}

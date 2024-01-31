@@ -36,6 +36,7 @@ export const autoLoginAsync = createAsyncThunk(
     localStorage.removeItem("autoLoginCredentials");
   }
 );
+
 export const signinAsync = createAsyncThunk(
   "auth/login",
   async (credentials, { dispatch }) => {

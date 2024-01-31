@@ -3,6 +3,7 @@ import { instance } from "../../utils/axiosInstace";
 import { deletePollOption } from "../Slices/pollSlice";
 import { deletePoll } from "../Slices/pollSlice";
 import { fetchLatestPoll } from "../../utils/fetchLatestdata";
+
 export const deletePollOptionAsync = createAsyncThunk(
   "poll/deletePollOption",
   async ({ deletePollId, optionText }, { dispatch }) => {
@@ -15,7 +16,7 @@ export const deletePollOptionAsync = createAsyncThunk(
 
       if (response.status === 200) {
        fetchLatestPoll(dispatch)
-        dispatch(deletePollOption({ loading: false }));
+        dispatch(deletePollOption({ loading: false, editId: deletePollId }));
         return true; 
       }
     } catch (error) {
@@ -25,6 +26,7 @@ export const deletePollOptionAsync = createAsyncThunk(
     }
   }
 );
+
 export const deletePollAsync = createAsyncThunk(
   "poll/deletePoll",
   async ({ deleteId }, { dispatch }) => {
@@ -35,7 +37,7 @@ export const deletePollAsync = createAsyncThunk(
 
       if (response.status === 200) {
         fetchLatestPoll(dispatch)
-        dispatch(deletePollOption({ loading: false }));
+        dispatch(deletePoll({ loading: false, editId: deleteId }));
         return true; 
       }
     } catch (error) {
