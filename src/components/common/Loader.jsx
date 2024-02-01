@@ -23,7 +23,7 @@ const Loader = ({ loadingtext , className }) => {
           </div>
         </Typography>
       </div>
-    </div>
+    </div>  
   );
 };
 
