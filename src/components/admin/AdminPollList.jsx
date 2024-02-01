@@ -40,15 +40,18 @@ export default function AdminPollList() {
   const deleteLoader = useSelector((state) => state.poll.loading);
 
   const [page, setPage] = useState(0);
+  console.log(page);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
    const handleChangePage = (event, newPage) => {
      setPage(newPage);
    };
 
+   const listedPoll = [...allListedPolls].reverse();
+
    const handleChangeRowsPerPage = (event) => {
      setRowsPerPage(parseInt(event.target.value, 10));
-     setPage(0);
+     setPage(page);
    };
 
   const handleDeletePoll = (deleteId) => {
@@ -74,7 +77,7 @@ export default function AdminPollList() {
 
   useEffect(() => {
     fetchLatestPoll(dispatch);
-  }, [page]);
+  }, []);
 
 
   const handleEditTitleOpen = (id) => {
@@ -115,7 +118,7 @@ export default function AdminPollList() {
         <div>
           {allListedPolls.length > 0 ? (
             <div className="h-fit md:pt-10 pt-2 bg-[#F8F8F8] pb-10 flex flex-col  w-full">
-              {allListedPolls.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((element, index) => (
+              {listedPoll.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((element, index) => (
                 <div
                   className="flex justify-center w-full mt-1 md:mt-4 "
                   key={index}>
