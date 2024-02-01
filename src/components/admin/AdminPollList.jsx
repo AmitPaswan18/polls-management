@@ -39,19 +39,27 @@ export default function AdminPollList() {
   const allListedPolls = useSelector((state) => state.poll.poll);
   const deleteLoader = useSelector((state) => state.poll.loading);
 
-  const [page, setPage] = useState(0);
+    const [page, setPage] = useState(() => {
+      const storedPage = localStorage.getItem("listedPollPage");
+      return storedPage ? parseInt(storedPage, 10) : 0;
+    });
+
   console.log(page);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
    const handleChangePage = (event, newPage) => {
+    localStorage.setItem("listedPollPage", newPage.toString());
      setPage(newPage);
    };
 
    const listedPoll = [...allListedPolls].reverse();
 
    const handleChangeRowsPerPage = (event) => {
+   const listedpage =   localStorage.getItem("listedPollPage")
+   console.log(listedpage);
      setRowsPerPage(parseInt(event.target.value, 10));
-     setPage(page);
+     setPage(0);
+     localStorage.setItem("listedPollPage", "0");
    };
 
   const handleDeletePoll = (deleteId) => {
