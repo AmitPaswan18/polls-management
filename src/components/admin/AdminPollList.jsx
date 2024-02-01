@@ -16,8 +16,7 @@ import Loader from "../common/Loader";
 import { deletePollOptionAsync } from "../../redux/Thunk/pollOptionThunk";
 import { deletePollAsync } from "../../redux/Thunk/pollOptionThunk";
 import { fetchLatestPoll } from "../../utils/fetchLatestdata";
-
-import Pagination from "@mui/material/Pagination";
+import TablePagination from "@mui/material/TablePagination";
 
 import { useState } from "react";
 
@@ -39,22 +38,18 @@ export default function AdminPollList() {
   const navigate = useNavigate();
   const allListedPolls = useSelector((state) => state.poll.poll);
   const deleteLoader = useSelector((state) => state.poll.loading);
-  const pollsperpage = 5;
 
-  const reversedPolls = [...allListedPolls].reverse();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [page, setPage] = useState(1);
+   const handleChangePage = (event, newPage) => {
+     setPage(newPage);
+   };
 
-  const handlePageChange = (event, value) => {
-    setPage(value);
-  };
-
-  const pollsToDisplay = reversedPolls.slice(
-    (page - 1) * pollsperpage,
-    page * pollsperpage
-  );
-
-  const totalPage = Math.ceil(allListedPolls.length / pollsperpage);
+   const handleChangeRowsPerPage = (event) => {
+     setRowsPerPage(parseInt(event.target.value, 10));
+     setPage(0);
+   };
 
   const handleDeletePoll = (deleteId) => {
     dispatch(deletePollAsync({ deleteId }));
@@ -120,7 +115,7 @@ export default function AdminPollList() {
         <div>
           {allListedPolls.length > 0 ? (
             <div className="h-fit md:pt-10 pt-2 bg-[#F8F8F8] pb-10 flex flex-col  w-full">
-              {pollsToDisplay.map((element, index) => (
+              {allListedPolls.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((element, index) => (
                 <div
                   className="flex justify-center w-full mt-1 md:mt-4 "
                   key={index}>
@@ -200,12 +195,15 @@ export default function AdminPollList() {
                 </div>
               ))}
               <div className=" mt-4 flex justify-center">
-                <div>Page: {page}</div>
                 <div>
-                  <Pagination
-                    count={totalPage}
+                  <TablePagination
+                    component="div"
+                    count={allListedPolls.length}
+                    rowsPerPageOptions={[5, 10, 25]}
                     page={page}
-                    onChange={handlePageChange}
+                    onPageChange={handleChangePage}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
                   />
                 </div>
               </div>
