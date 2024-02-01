@@ -74,6 +74,15 @@ export default function AdminPollList() {
   const handleDeletePollOption = async (deletePollId, optionText) => {
     try {
       await dispatch(deletePollOptionAsync({ deletePollId, optionText }));
+
+       const updatedPoll = allListedPolls.find(
+         (element) => element._id === deletePollId
+       );
+
+       if (updatedPoll.options.length <= 2) {
+        dispatch(deletePollAsync({ deleteId: deletePollId }));
+       }
+
     } catch (error) {
       console.error("Error in handleDeletePollOption:", error);
     }
