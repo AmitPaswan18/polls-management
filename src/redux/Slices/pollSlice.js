@@ -7,7 +7,8 @@ export const initialState = {
   editId: null,
   page: 1,
   voteId: null,
-  Voted : false,
+  Voted: false,
+  deletePollId: null,
 };
 
 const pollSlice = createSlice({
@@ -28,6 +29,7 @@ const pollSlice = createSlice({
       state.loading = action.payload.loading;
     },
     deletePollOption(state, action) {
+      state.deletePollId = action.payload.deletePollId; 
       state.loading = action.payload.loading;
     },
     getPollPage(state, action) {
