@@ -14,9 +14,10 @@ export const deletePollOptionAsync = createAsyncThunk(
         `/delete_poll_option?id=${deletePollId}&option_text=${optionText}`
       );
 
+
       if (response.status === 200) {
        fetchLatestPoll(dispatch)
-        dispatch(deletePollOption({ loading: false, editId: deletePollId }));
+        dispatch(deletePollOption({ loading: false, deletePollId : deletePollId }));
         return true; 
       }
     } catch (error) {
