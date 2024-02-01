@@ -34,6 +34,7 @@ theme.typography.h3 = {
 };
 
 export default function AdminPollList() {
+  
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const allListedPolls = useSelector((state) => state.poll.poll);
@@ -44,23 +45,27 @@ export default function AdminPollList() {
       return storedPage ? parseInt(storedPage, 10) : 0;
     });
 
-  console.log(page);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+   const [rowsPerPage, setRowsPerPage] = useState(() => {
+     const storedRowsPerPage = localStorage.getItem("listedPollRowsPerPage");
+     return storedRowsPerPage ? parseInt(storedRowsPerPage, 10) : 5;
+   });
+
 
    const handleChangePage = (event, newPage) => {
     localStorage.setItem("listedPollPage", newPage.toString());
+    console.log("newpage" , newPage);
      setPage(newPage);
    };
 
    const listedPoll = [...allListedPolls].reverse();
 
-   const handleChangeRowsPerPage = (event) => {
-   const listedpage =   localStorage.getItem("listedPollPage")
-   console.log(listedpage);
-     setRowsPerPage(parseInt(event.target.value, 10));
-     setPage(0);
-     localStorage.setItem("listedPollPage", "0");
-   };
+ const handleChangeRowsPerPage = (event) => {
+   const newRowsPerPage = parseInt(event.target.value, 10);
+   setRowsPerPage(newRowsPerPage);
+   setPage(0);
+   localStorage.setItem("listedPollPage", "0");
+   localStorage.setItem("listedPollRowsPerPage", newRowsPerPage.toString());
+ };
 
   const handleDeletePoll = (deleteId) => {
     dispatch(deletePollAsync({ deleteId }));
