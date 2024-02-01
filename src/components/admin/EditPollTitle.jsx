@@ -61,10 +61,10 @@ const EditPollTitle = () => {
   }, [editId.id]);
 
 
-useEffect(() => {
-  if (!singlePoll) return;
-  setEditTitle(singlePoll.title);
-}, [singlePoll]);
+  useEffect(() => {
+    if (!singlePoll) return;
+    setEditTitle(singlePoll.title);
+  }, [singlePoll]);
 
 
   const handleClose = () => {
@@ -111,32 +111,34 @@ useEffect(() => {
                   initialValues={{ editTitle }}
                   validationSchema={validationSchema}
                   onSubmit={handleUpdatePollTitle}>
-               {({dirty}) =>(
-                   <Form>
-                    <div className="text-lg">Edit Title:</div>
-                    <Field
-                      as={ToggleSelectar}
-                      className={
-                        "p-2 border-2 my-3 rounded-md placeholder:bg-[#2B1442]"
-                      }
-                      name="editTitle"
-                      placeholder="Edit Title"
-                      id="editTitle"
-                      title="editTitle"
-                    />
-                    <div className="mt-2 gap-2 flex">
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        disabled={!dirty}>
-                        Save Changes
-                      </Button>
-                      <Button onClick={() => handleClose()} variant="contained">
-                        Back to Home
-                      </Button>
-                    </div>
-                  </Form>
-               )}
+                  {({ dirty }) => (
+                    <Form>
+                      <div className="text-lg">Edit Title:</div>
+                      <Field
+                        as={ToggleSelectar}
+                        className={
+                          "p-2 border-2 my-3 rounded-md placeholder:bg-[#2B1442]"
+                        }
+                        name="editTitle"
+                        placeholder="Edit Title"
+                        id="editTitle"
+                        title="editTitle"
+                      />
+                      <div className="mt-2 gap-2 flex">
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          disabled={!dirty}>
+                          Save Changes
+                        </Button>
+                        <Button
+                          onClick={() => handleClose()}
+                          variant="contained">
+                          Back to Home
+                        </Button>
+                      </div>
+                    </Form>
+                  )}
                 </Formik>
               </Box>
             )}
