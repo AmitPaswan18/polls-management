@@ -12,7 +12,7 @@ import Box from "@mui/material/Box";
 
 import Loader from "../common/Loader";
 
-import { updatePollTitleAsync } from "../../redux/Thunk/PollTitleThunk.js";
+import {updatePollTitleAsync} from "../../redux/Thunk/pollTitleThunk.js"
 
 const style = {
   position: "absolute",

@@ -2,6 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { instance } from "../../utils/axiosInstace";
 import { updateTitleLoading } from "../Slices/pollTitleSlice";
 import { fetchLatestPoll } from "../../utils/fetchLatestdata";
+
 export const updatePollTitleAsync = createAsyncThunk(
   "pollTitle/updatePollTitle",
   async ({ editPollTitleId, editTitle }, { dispatch }) => {
